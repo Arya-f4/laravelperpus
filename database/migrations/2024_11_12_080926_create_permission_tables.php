@@ -12,79 +12,66 @@ return new class extends Migration
      */
     public function up(): void
     {
-        $tableNames = config('permission.table_names');
-        $columnNames = config('permission.column_names');
+        // Define table names
+        $permissionsTable = 'permissions';
+        $rolesTable = 'roles';
+        $modelHasPermissionsTable = 'model_has_permissions';
+        $modelHasRolesTable = 'model_has_roles';
+        $roleHasPermissionsTable = 'role_has_permissions';
 
-        if (empty($tableNames)) {
-            throw new \Exception('Error: config/permission.php not loaded. Run [php artisan config:clear] and try again.');
-        }
-
-        Schema::create($tableNames['permissions'], function (Blueprint $table) {
+        // Create permissions table
+        Schema::create($permissionsTable, function (Blueprint $table) {
             $table->id();
             $table->string('name', 125);
             $table->string('guard_name', 125);
             $table->timestamps();
-
             $table->unique(['name', 'guard_name']);
         });
 
-        Schema::create($tableNames['roles'], function (Blueprint $table) {
+        // Create roles table
+        Schema::create($rolesTable, function (Blueprint $table) {
             $table->id();
             $table->string('name', 125);
             $table->string('guard_name', 125);
             $table->timestamps();
-
             $table->unique(['name', 'guard_name']);
         });
 
-        Schema::create($tableNames['model_has_permissions'], function (Blueprint $table) use ($tableNames, $columnNames) {
+        // Create model_has_permissions table
+        Schema::create($modelHasPermissionsTable, function (Blueprint $table) use ($permissionsTable) {
             $table->foreignId('permission_id')
-                ->constrained($tableNames['permissions'])
+                ->constrained($permissionsTable)
                 ->cascadeOnDelete();
-
             $table->string('model_type');
-            $table->unsignedBigInteger($columnNames['model_morph_key']);
-            $table->index([$columnNames['model_morph_key'], 'model_type'], 'model_has_permissions_model_id_model_type_index');
-
-            $table->primary(
-                ['permission_id', $columnNames['model_morph_key'], 'model_type'],
-                'model_has_permissions_permission_model_type_primary'
-            );
+            $table->unsignedBigInteger('model_id');
+            $table->index(['model_id', 'model_type'], 'model_has_permissions_model_id_model_type_index');
+            $table->primary(['permission_id', 'model_id', 'model_type'], 'model_has_permissions_permission_model_type_primary');
         });
 
-        Schema::create($tableNames['model_has_roles'], function (Blueprint $table) use ($tableNames, $columnNames) {
+        // Create model_has_roles table
+        Schema::create($modelHasRolesTable, function (Blueprint $table) use ($rolesTable) {
             $table->foreignId('role_id')
-                ->constrained($tableNames['roles'])
+                ->constrained($rolesTable)
                 ->cascadeOnDelete();
-
             $table->string('model_type');
-            $table->unsignedBigInteger($columnNames['model_morph_key']);
-            $table->index([$columnNames['model_morph_key'], 'model_type'], 'model_has_roles_model_id_model_type_index');
-
-            $table->primary(
-                ['role_id', $columnNames['model_morph_key'], 'model_type'],
-                'model_has_roles_role_model_type_primary'
-            );
+            $table->unsignedBigInteger('model_id');
+            $table->index(['model_id', 'model_type'], 'model_has_roles_model_id_model_type_index');
+            $table->primary(['role_id', 'model_id', 'model_type'], 'model_has_roles_role_model_type_primary');
         });
 
-        Schema::create($tableNames['role_has_permissions'], function (Blueprint $table) use ($tableNames) {
+        // Create role_has_permissions table
+        Schema::create($roleHasPermissionsTable, function (Blueprint $table) use ($permissionsTable, $rolesTable) {
             $table->foreignId('permission_id')
-                ->constrained($tableNames['permissions'])
+                ->constrained($permissionsTable)
                 ->cascadeOnDelete();
-
             $table->foreignId('role_id')
-                ->constrained($tableNames['roles'])
+                ->constrained($rolesTable)
                 ->cascadeOnDelete();
-
             $table->primary(['permission_id', 'role_id'], 'role_has_permissions_permission_id_role_id_primary');
         });
 
-        // Clear the permissions cache
-        if (config('permission.cache.store') !== 'default') {
-            Cache::store(config('permission.cache.store'))->forget(config('permission.cache.key'));
-        } else {
-            Cache::forget(config('permission.cache.key'));
-        }
+        // Clear the cache if necessary
+        Cache::forget('permission.cache.key');
     }
 
     /**
@@ -92,16 +79,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        $tableNames = config('permission.table_names');
-
-        if (empty($tableNames)) {
-            throw new \Exception('Error: config/permission.php not found and defaults could not be merged. Please publish the package configuration before proceeding, or drop the tables manually.');
-        }
-
-        Schema::dropIfExists($tableNames['role_has_permissions']);
-        Schema::dropIfExists($tableNames['model_has_roles']);
-        Schema::dropIfExists($tableNames['model_has_permissions']);
-        Schema::dropIfExists($tableNames['roles']);
-        Schema::dropIfExists($tableNames['permissions']);
+        Schema::dropIfExists('role_has_permissions');
+        Schema::dropIfExists('model_has_roles');
+        Schema::dropIfExists('model_has_permissions');
+        Schema::dropIfExists('roles');
+        Schema::dropIfExists('permissions');
     }
 };

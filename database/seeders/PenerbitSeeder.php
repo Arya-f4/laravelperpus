@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\Penerbit;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class PenerbitSeeder extends Seeder
@@ -17,13 +17,16 @@ class PenerbitSeeder extends Seeder
     {
         $penerbit = ['none', 'gramedia', 'erlangga'];
 
-        foreach ($penerbit as $key => $value) {
-            Penerbit::create([
+        $data = [];
+        foreach ($penerbit as $value) {
+            $data[] = [
                 'nama' => $value,
-                'slug' => Str::slug($value)
-            ]);
+                'slug' => Str::slug($value),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
         }
 
-      
+        DB::table('penerbit')->insert($data);
     }
 }
