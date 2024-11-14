@@ -19,7 +19,7 @@ class PeminjamanSeeder extends Seeder
     {
         $faker = Factory::create('id_ID');
 
-        for ($i = 0; $i < 300; $i++) {
+        for ($i = 0; $i < 100; $i++) {
             // Generate dates for borrowing, due, and return
             $tanggal_pinjam = $faker->dateTimeBetween('-6 months', '-2 week');
             $tanggal_kembali = Carbon::parse($tanggal_pinjam)->addDays(10);

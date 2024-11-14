@@ -13,7 +13,7 @@ class RoleSeeder extends Seeder
         // Create roles
         $adminRole = Role::create(['name' => 'admin']);
         $petugasRole = Role::create(['name' => 'petugas']);
-        $userRole = Role::create(['name' => 'user']);
+        $userRole = Role::create(['name' => 'peminjam']);
 
         // Create permissions
         $permissions = [

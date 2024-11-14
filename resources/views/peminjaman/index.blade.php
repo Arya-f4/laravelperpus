@@ -66,27 +66,27 @@
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <div class="text-sm text-gray-500">
-                                                {{ $pinjam->buku->judul }}
+                                                {{ $pinjam->buku->judul ?? 'N/A' }}
                                             </div>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <div class="text-sm text-gray-500">
-                                                {{ $pinjam->user->name }}
+                                                {{ $pinjam->user->name??'N/A' }}
                                             </div>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <div class="text-sm text-gray-500">
-                                                {{ $pinjam->tanggal_pinjam }}
+                                                {{ $pinjam->tanggal_pinjam??'N/A' }}
                                             </div>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <div class="text-sm text-gray-500">
-                                                {{ $pinjam->tanggal_kembali }}
+                                                {{ $pinjam->tanggal_kembali??'N/A' }}
                                             </div>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $pinjam->status === 'dipinjam' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-                                                {{ $pinjam->status }}
+                                                {{ $pinjam->status??'N/A' }}
                                             </span>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
@@ -100,6 +100,16 @@
                                                     </button>
                                                 </form>
                                             @endif
+                                            @can('edit peminjaman')
+                                                <a href="{{ route('peminjaman.edit', $pinjam) }}" class="text-indigo-600 hover:text-indigo-900 ml-2">Edit</a>
+                                            @endcan
+                                            @can('delete peminjaman')
+                                                <form action="{{ route('peminjaman.destroy', $pinjam) }}" method="POST" class="inline ml-2">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="text-red-600 hover:text-red-900" onclick="return confirm('Are you sure you want to delete this record?')">Delete</button>
+                                                </form>
+                                            @endcan
                                             @if($pinjam->denda && !$pinjam->denda->is_paid)
                                                 <form action="{{ route('peminjaman.pay-fine', $pinjam->denda) }}" method="POST" class="inline ml-2">
                                                     @csrf
