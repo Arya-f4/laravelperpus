@@ -74,8 +74,75 @@ Route::middleware(['auth'])->group(function () {
 
 //TODO: Rek tolong yang ini jadiin kayak yang diatas ya please, capek banget satu satu ngasih routing
 
-    Route::resource('categories', KategoriController::class)->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
-    Route::resource('books', BukuController::class)->except(['index', 'show']);
+    // categories
+    Route::get('/categories/index', function () {
+        if (Auth::user()->getRoleNames()->first() === 'admin') {
+            return (new KategoriController())->index();
+        } else {
+            return redirect()->route('user.dashboard');
+        }
+    })->name('categories.index');
+
+    Route::get('/categories/create', function () {
+        if (Auth::user()->getRoleNames()->first() === 'admin') {
+            return (new KategoriController())->create();
+        } else {
+            return redirect()->route('user.dashboard');
+        }
+    })->name('categories.create');
+
+    Route::get('/categories/store', function () {
+        if (Auth::user()->getRoleNames()->first() === 'admin') {
+            return (new KategoriController())->store();
+        } else {
+            return redirect()->route('user.dashboard');
+        }
+    })->name('categories.store');
+
+    Route::get('/categories/update/{id}', function () {
+        if (Auth::user()->getRoleNames()->first() === 'admin') {
+            return (new KategoriController())->update();
+        } else {
+            return redirect()->route('user.dashboard');
+        }
+    })->name('categories.update');
+
+    Route::get('/categories/destroy/{id}', function () {
+        if (Auth::user()->getRoleNames()->first() === 'admin') {
+            return (new KategoriController())->destroy();
+        } else {
+            return redirect()->route('user.dashboard');
+        }
+    })->name('categories.destroy');
+
+
+    // Books
+    Route::get('books/index', function () {
+        if (Auth::user()->getRoleNames()->first() === 'admin') {
+            return (new BukuController())->index();
+        } else {
+            return redirect()->route('books.index');
+        }
+    });
+    Route::get('books/show{id}', function () {
+        if (Auth::user()->getRoleNames()->first() === 'admin') {
+            return (new BukuController())->show();
+        } else {
+            return redirect()->route('books.show');
+        }
+    });
+
+    // publishers
+    Route::get('publishers/index', function () {
+        if (Auth::user()->getRoleNames()->first() === 'admin') {
+            return (new PenerbitController())->index();
+        } else {
+            return redirect()->route('penerbit.index');
+        }
+    });
+
+    // Route::resource('categories', KategoriController::class)->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
+    // Route::resource('books', BukuController::class)->except(['index', 'show']);
     Route::resource('publishers', PenerbitController::class);
     Route::resource('racks', RakController::class);
 
