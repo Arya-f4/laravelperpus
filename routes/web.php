@@ -74,7 +74,7 @@ Route::middleware(['auth'])->group(function () {
 
 //TODO: Rek tolong yang ini jadiin kayak yang diatas ya please, capek banget satu satu ngasih routing
 
-    // categories
+    // categoriessssss
     Route::get('/categories/index', function () {
         if (Auth::user()->getRoleNames()->first() === 'admin') {
             return (new KategoriController())->index();
