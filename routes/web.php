@@ -73,6 +73,10 @@ Route::middleware(['auth'])->group(function () {
     })->name('admin.books.index');
 
 //TODO: Rek tolong yang ini jadiin kayak yang diatas ya please, capek banget satu satu ngasih routing
+    // Route::resource('categories', KategoriController::class)->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
+    // Route::resource('books', BukuController::class)->except(['index', 'show']);
+    // Route::resource('publishers', PenerbitController::class);
+    // Route::resource('racks', RakController::class);
 
     // categories
     Route::get('/categories/index', function () {
@@ -125,25 +129,50 @@ Route::middleware(['auth'])->group(function () {
 
 
     // Books
-    Route::get('books/index', function () {
+    Route::get('/books/create', function () {
         if (Auth::user()->getRoleNames()->first() === 'admin') {
-            return (new BukuController())->index();
+            return (new BukuController())->create();
         } else {
             return redirect()->route('user.dashboard');
         }
-    })->name('books.index');
+    })->name('books.create');
 
-    Route::get('books/show{id}', function () {
+    Route::get('/books/store', function () {
         if (Auth::user()->getRoleNames()->first() === 'admin') {
-            return (new BukuController())->show();
+            return (new BukuController())->store();
         } else {
             return redirect()->route('user.dashboard');
         }
-    })->name('books.show');
+    })->name('books.store');
+
+    Route::get('/books/edit/{id}', function () {
+        if (Auth::user()->getRoleNames()->first() === 'admin') {
+            return (new BukuController())->edit();
+        } else {
+            return redirect()->route('user.dashboard');
+        }
+    })->name('books.edit');
+
+    Route::get('/books/update/{id}', function () {
+        if (Auth::user()->getRoleNames()->first() === 'admin') {
+            return (new BukuController())->update();
+    
+        } else {
+            return redirect()->route('user.dashboard');
+        }
+    })->name('books.update');
+
+    Route::get('/books/destroy/{id}', function () {
+        if (Auth::user()->getRoleNames()->first() === 'admin') {
+            return (new BukuController())->destroy();
+        } else {
+            return redirect()->route('user.dashboard');
+        }
+    })->name('books.destroy');
 
 
     // publishers
-    Route::get('publishers/index', function () {
+    Route::get('/publishers/index', function () {
         if (Auth::user()->getRoleNames()->first() === 'admin') {
             return (new PenerbitController())->index();
         } else {
@@ -151,7 +180,7 @@ Route::middleware(['auth'])->group(function () {
         }
     })->name('publishers.index');
 
-    Route::get('publishers/create', function () {
+    Route::get('/publishers/create', function () {
         if (Auth::user()->getRoleNames()->first() === 'admin') {
             return (new PenerbitController())->create();
         } else {
@@ -159,7 +188,7 @@ Route::middleware(['auth'])->group(function () {
         }
     })->name('publishers.create');
 
-    Route::get('publishers/store', function () {
+    Route::get('/publishers/store', function () {
         if (Auth::user()->getRoleNames()->first() === 'admin') {
             return (new PenerbitController())->store();
         } else {
@@ -167,7 +196,7 @@ Route::middleware(['auth'])->group(function () {
         }
     })->name('publishers.store');
 
-    Route::get('publishers/edit/{id}', function () {
+    Route::get('/publishers/edit/{id}', function () {
         if (Auth::user()->getRoleNames()->first() === 'admin') {
             return (new PenerbitController())->edit();
         } else {
@@ -175,7 +204,7 @@ Route::middleware(['auth'])->group(function () {
         }
     })->name('publishers.edit');
 
-    Route::get('publishers/update/{id}', function () {
+    Route::get('/publishers/update/{id}', function () {
         if (Auth::user()->getRoleNames()->first() === 'admin') {
             return (new PenerbitController())->update();
         } else {
@@ -183,7 +212,7 @@ Route::middleware(['auth'])->group(function () {
         }
     })->name('publishers.update');
 
-    Route::get('publishers/destroy/{id}', function () {
+    Route::get('/publishers/destroy/{id}', function () {
         if (Auth::user()->getRoleNames()->first() === 'admin') {
             return (new PenerbitController())->destroy();
         } else {
@@ -193,7 +222,7 @@ Route::middleware(['auth'])->group(function () {
 
 
     // racks
-    Route::get('racks/index', function () {
+    Route::get('/racks/index', function () {
         if (Auth::user()->getRoleNames()->first() === 'admin') {
             return (new RakController())->index();
         } else {
@@ -201,7 +230,7 @@ Route::middleware(['auth'])->group(function () {
         }
     })->name('racks.index');
 
-    Route::get('racks/create', function () {
+    Route::get('/racks/create', function () {
         if (Auth::user()->getRoleNames()->first() === 'admin') {
             return (new RakController())->create();
         } else {
@@ -209,7 +238,7 @@ Route::middleware(['auth'])->group(function () {
         }
     })->name('racks.create');
 
-    Route::get('racks/store', function () {
+    Route::get('/racks/store', function () {
         if (Auth::user()->getRoleNames()->first() === 'admin') {
             return (new RakController())->store();
         } else {
@@ -217,7 +246,7 @@ Route::middleware(['auth'])->group(function () {
         }
     })->name('racks.store');
 
-    Route::get('racks/edit/{id}', function () {
+    Route::get('/racks/edit/{id}', function () {
         if (Auth::user()->getRoleNames()->first() === 'admin') {
             return (new RakController())->edit();
         } else {
@@ -225,7 +254,7 @@ Route::middleware(['auth'])->group(function () {
         }
     })->name('racks.edit');
 
-    Route::get('racks/update/{id}', function () {
+    Route::get('/racks/update/{id}', function () {
         if (Auth::user()->getRoleNames()->first() === 'admin') {
             return (new RakController())->update();
         } else {
@@ -233,7 +262,7 @@ Route::middleware(['auth'])->group(function () {
         }
     })->name('racks.update');
 
-    Route::get('racks/destroy/{id}', function () {
+    Route::get('/racks/destroy/{id}', function () {
         if (Auth::user()->getRoleNames()->first() === 'admin') {
             return (new RakController())->destroy();
         } else {
@@ -241,10 +270,6 @@ Route::middleware(['auth'])->group(function () {
         }
     })->name('racks.destroy');
 
-    // Route::resource('categories', KategoriController::class)->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
-    // Route::resource('books', BukuController::class)->except(['index', 'show']);
-    // Route::resource('publishers', PenerbitController::class);
-    // Route::resource('racks', RakController::class);
 
     // Settings routes
     Route::get('/settings', function () {
