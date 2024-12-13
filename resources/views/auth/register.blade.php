@@ -1,7 +1,17 @@
 <!-- resources/views/auth/register.blade.php -->
 <x-guest-layout>
-    <div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
         <div class="max-w-md w-full space-y-8">
+
+            @if ($errors->any())
+                @foreach ($errors->all() as $error)
+                    <div class=" bg-red-500 text-sm text-white rounded-lg p-4" role="alert" tabindex="-1"
+                        aria-labelledby="hs-solid-color-danger-label">
+                        {{ $error }}
+                    </div>
+                @endforeach
+            @endif
+
             <div>
                 <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
                     Create your account

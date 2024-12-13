@@ -32,10 +32,11 @@ class PenerbitController extends Controller
         return redirect()->route('publishers.index')->with('success', 'Publisher created successfully.');
     }
 
-    public function edit(Penerbit $publisher)
+    public function edit($id)
     {
+        $publisher = Penerbit::findOrFail($id);
         return view('publishers.edit', compact('publisher'));
-    }
+    }    
 
     public function update(Request $request, Penerbit $publisher)
     {

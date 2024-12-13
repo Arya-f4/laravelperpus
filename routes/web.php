@@ -9,9 +9,17 @@ use App\Http\Controllers\PenerbitController;
 use App\Http\Controllers\RakController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SettingController;
+use App\Models\Buku;
 use Illuminate\Support\Facades\Auth;
+
+
 // Public routes
-Route::get('/', [BukuController::class, 'index'])->name('home');
+Route::get('/', function () {
+    $books = Buku::with(['kategori', 'penerbit', 'rak'])->paginate(10);
+    return view('home', compact('books'));
+})->name('home');
+
+
 Route::get('/books', [BukuController::class, 'index'])->name('books.index');
 Route::get('/books/{slug}', [BukuController::class, 'show'])->name('books.show');
 // Example to check role in a route
@@ -196,13 +204,13 @@ Route::middleware(['auth'])->group(function () {
         }
     })->name('publishers.store');
 
-    Route::get('/publishers/edit/{id}', function () {
+    Route::get('/publishers/edit/{id}', function ($id) {
         if (Auth::user()->getRoleNames()->first() === 'admin') {
-            return (new PenerbitController())->edit();
+            return (new App\Http\Controllers\PenerbitController())->edit($id);
         } else {
             return redirect()->route('user.dashboard');
         }
-    })->name('publishers.edit');
+    })->name('publishers.edit');    
 
     Route::get('/publishers/update/{id}', function () {
         if (Auth::user()->getRoleNames()->first() === 'admin') {
@@ -246,9 +254,9 @@ Route::middleware(['auth'])->group(function () {
         }
     })->name('racks.store');
 
-    Route::get('/racks/edit/{id}', function () {
+    Route::get('/racks/edit/{id}', function ($id) {
         if (Auth::user()->getRoleNames()->first() === 'admin') {
-            return (new RakController())->edit();
+            return (new App\Http\Controllers\RakController())->edit($id);
         } else {
             return redirect()->route('user.dashboard');
         }

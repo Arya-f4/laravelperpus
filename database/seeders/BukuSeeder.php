@@ -19,7 +19,7 @@ class BukuSeeder extends Seeder
             [
                 'judul' => 'bintang',
                 'slug' => Str::slug('bintang'),
-                'sampul' => 'buku/images.jpeg',
+                'sampul' => '',
                 'penulis' => 'tere liye',
                 'penerbit_id' => 2,
                 'kategori_id' => 2,
@@ -29,7 +29,7 @@ class BukuSeeder extends Seeder
             [
                 'judul' => 'matahari',
                 'slug' => Str::slug('matahari'),
-                'sampul' => 'buku/images.jpeg',
+                'sampul' => '',
                 'penulis' => 'tere liye',
                 'penerbit_id' => 3,
                 'kategori_id' => 2,
@@ -39,7 +39,7 @@ class BukuSeeder extends Seeder
             [
                 'judul' => 'tentang kamu',
                 'slug' => Str::slug('tentang-kamu'),
-                'sampul' => 'buku/images.jpeg',
+                'sampul' => '',
                 'penulis' => 'tere liye',
                 'penerbit_id' => 2,
                 'kategori_id' => 2,
@@ -49,7 +49,7 @@ class BukuSeeder extends Seeder
             [
                 'judul' => 'gusdur',
                 'slug' => Str::slug('gusdur'),
-                'sampul' => 'buku/images.jpeg',
+                'sampul' => '',
                 'penulis' => 'greg borton',
                 'penerbit_id' => 2,
                 'kategori_id' => 3,
@@ -59,7 +59,7 @@ class BukuSeeder extends Seeder
             [
                 'judul' => 'habibie',
                 'slug' => Str::slug('habibie'),
-                'sampul' => 'buku/images.jpeg',
+                'sampul' => '',
                 'penulis' => 'raden toto sugiharto',
                 'penerbit_id' => 2,
                 'kategori_id' => 3,
@@ -69,7 +69,7 @@ class BukuSeeder extends Seeder
             [
                 'judul' => 'naruto volume 58',
                 'slug' => Str::slug('naruto-volume-58'),
-                'sampul' => 'buku/images.jpeg',
+                'sampul' => '',
                 'penulis' => 'masashi kishimoto',
                 'penerbit_id' => 3,
                 'kategori_id' => 6,
@@ -79,7 +79,7 @@ class BukuSeeder extends Seeder
             [
                 'judul' => 'naruto volume 71',
                 'slug' => Str::slug('naruto-volume-71'),
-                'sampul' => 'buku/images.jpeg',
+                'sampul' => '',
                 'penulis' => 'masashi kishimoto',
                 'penerbit_id' => 3,
                 'kategori_id' => 6,

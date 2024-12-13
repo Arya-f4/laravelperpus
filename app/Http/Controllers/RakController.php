@@ -31,8 +31,9 @@ class RakController extends Controller
         return redirect()->route('racks.index')->with('success', 'Rack created successfully.');
     }
 
-    public function edit(Rak $rack)
+    public function edit($id)
     {
+        $rack = Rak::findOrFail($id);
         return view('racks.edit', compact('rack'));
     }
 
