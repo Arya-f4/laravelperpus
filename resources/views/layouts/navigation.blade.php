@@ -43,6 +43,9 @@
                             <x-nav-link :href="route('peminjaman.user-index')" :active="request()->routeIs('peminjaman.user-index')">
                                 {{ __('My Borrowings') }}
                             </x-nav-link>
+                            <x-nav-link :href="route('peminjaman.cart')" :active="request()->routeIs('peminjaman.cart')">
+                                {{ __('Cart') }}
+                            </x-nav-link>
                         @endif
                     @endauth
                 </div>
@@ -138,6 +141,9 @@
                     </x-responsive-nav-link>
                     <x-responsive-nav-link :href="route('peminjaman.index')" :active="request()->routeIs('peminjaman.user-index')">
                         {{ __('My Borrowings') }}
+                    </x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('peminjaman.cart')" :active="request()->routeIs('peminjaman.cart')">
+                        {{ __('Cart') }}
                     </x-responsive-nav-link>
                 @endif
             @endauth

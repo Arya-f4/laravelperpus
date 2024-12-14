@@ -21,35 +21,35 @@ class KategoriController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'nama' => 'required|unique:kategori|max:255',
-        ]);
 
-        $validated['slug'] = Str::slug($validated['nama']);
+        $validated = [
+            'nama' => $request->nama,
+            'slug' => $request->nama
+        ];
 
         Kategori::create($validated);
         return redirect()->route('categories.index')->with('success', 'Category created successfully');
     }
 
-    public function edit(Kategori $category)
+    public function edit($category)
     {
+        $category = Kategori::find($category);
         return view('categories.edit', compact('category'));
     }
 
-    public function update(Request $request, Kategori $category)
+    public function update(Request $request,  $category)
     {
-        $validated = $request->validate([
-            'nama' => 'required|unique:kategori,nama,' . $category->id . '|max:255',
-        ]);
+        $category = Kategori::find($category);
+        $category->nama = $request->nama;
+        $category->slug = $request->nama;
 
-        $validated['slug'] = Str::slug($validated['nama']);
-
-        $category->update($validated);
+        $category->save();
         return redirect()->route('categories.index')->with('success', 'Category updated successfully');
     }
 
-    public function destroy(Kategori $category)
+    public function destroy($category)
     {
+        $category = Kategori::find($category);
         $category->delete();
         return redirect()->route('categories.index')->with('success', 'Category deleted successfully');
     }

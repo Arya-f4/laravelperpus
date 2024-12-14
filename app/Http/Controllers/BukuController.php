@@ -7,6 +7,7 @@ use App\Models\Kategori;
 use App\Models\Penerbit;
 use App\Models\Rak;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class BukuController extends Controller
@@ -27,59 +28,76 @@ class BukuController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'judul' => 'required|max:255',
-            'penulis' => 'required|max:255',
-            'penerbit_id' => 'required|exists:penerbit,id',
-            'kategori_id' => 'required|exists:kategori,id',
-            'rak_id' => 'required|exists:rak,id',
-            'stok' => 'required|integer|min:0',
-            'sampul' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
-
+        // Proses file sampul
         $sampulPath = $request->file('sampul')->store('sampul', 'public');
-        $validated['sampul'] = $sampulPath;
-        $validated['slug'] = Str::slug($validated['judul']);
 
-        Buku::create($validated);
+        // Data untuk disimpan
+        $data = [
+            'judul' => $request->input('judul'),
+            'penulis' => $request->input('penulis'),
+            'penerbit_id' => $request->input('penerbit_id'),
+            'kategori_id' => $request->input('kategori_id'),
+            'rak_id' => $request->input('rak_id'),
+            'stok' => $request->input('stok'),
+            'sampul' => $sampulPath,
+            'slug' => Str::slug($request->input('judul')),
+        ];
 
+        // Simpan data ke database
+        Buku::create($data);
+
+        // Redirect ke halaman index buku dengan pesan sukses
         return redirect()->route('books.index')->with('success', 'Book created successfully.');
     }
 
-    public function edit(Buku $book)
+    public function edit($id)
     {
         $categories = Kategori::all();
         $publishers = Penerbit::all();
         $racks = Rak::all();
+        $book = Buku::find($id);
         return view('books.edit', compact('book', 'categories', 'publishers', 'racks'));
     }
 
-    public function update(Request $request, Buku $book)
+    public function update(Request $request, $book)
     {
-        $validated = $request->validate([
-            'judul' => 'required|max:255',
-            'penulis' => 'required|max:255',
-            'penerbit_id' => 'required|exists:penerbit,id',
-            'kategori_id' => 'required|exists:kategori,id',
-            'rak_id' => 'required|exists:rak,id',
-            'stok' => 'required|integer|min:0',
-            'sampul' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
+        // Pastikan $book adalah instance model
+    $book = Buku::findOrFail($book);
 
+        // Data untuk diupdate
+        $data = [
+            'judul' => $request->input('judul'),
+            'penulis' => $request->input('penulis'),
+            'penerbit_id' => $request->input('penerbit_id'),
+            'kategori_id' => $request->input('kategori_id'),
+            'rak_id' => $request->input('rak_id'),
+            'stok' => $request->input('stok'),
+        ];
+
+        // Proses file sampul jika diunggah
         if ($request->hasFile('sampul')) {
+            // Hapus sampul lama jika ada
+            if ($book->sampul && Storage::exists('public/' . $book->sampul)) {
+                Storage::delete('public/' . $book->sampul);
+            }
+
             $sampulPath = $request->file('sampul')->store('sampul', 'public');
-            $validated['sampul'] = $sampulPath;
+            $data['sampul'] = $sampulPath;
         }
 
-        $validated['slug'] = Str::slug($validated['judul']);
+        // Generate slug
+        $data['slug'] = Str::slug($request->input('judul'));
 
-        $book->update($validated);
+        // Update data ke database
+        $book->update($data);
 
+        // Redirect ke halaman index buku dengan pesan sukses
         return redirect()->route('books.index')->with('success', 'Book updated successfully.');
     }
 
-    public function destroy(Buku $book)
+    public function destroy($book)
     {
+        $book = Buku::find($book);
         $book->delete();
         return redirect()->route('books.index')->with('success', 'Book deleted successfully.');
     }

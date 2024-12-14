@@ -7,10 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Peminjaman extends Model
 {
     protected $table = 'peminjaman';
-    protected $fillable = [
-        'users_id', 'buku_id', 'kode_pinjam', 'tanggal_pinjam',
-        'tanggal_kembali', 'status'
-    ];
+    protected $guarded = [];
 
     public function user()
     {
@@ -19,11 +16,16 @@ class Peminjaman extends Model
 
     public function buku()
     {
-        return $this->belongsTo(Buku::class);
+        return $this->belongsTo(Buku::class, 'buku_id');  // assuming 'buku_id' is the foreign key
     }
 
     public function denda()
     {
         return $this->hasOne(Denda::class);
+    }
+
+    public function bukus()
+    {
+        return $this->belongsToMany(Buku::class, 'detail_peminjaman', 'peminjaman_id', 'buku_id');
     }
 }

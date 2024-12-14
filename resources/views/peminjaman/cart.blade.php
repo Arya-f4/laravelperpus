@@ -16,6 +16,7 @@
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead class="bg-gray-50">
                                 <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Book</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
                                 </tr>
@@ -23,9 +24,10 @@
                             <tbody class="bg-white divide-y divide-gray-200">
                                 @foreach($cartItems as $item)
                                     <tr>
-                                        <td class="px-6 py-4 whitespace-nowrap">{{ $item->buku->judul }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap">{{ $item->id }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap">{{ $item->judul }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap">
-                                            <form action="{{ route('peminjaman.remove-from-cart', $item->buku) }}" method="POST">
+                                            <form action="{{ route('peminjaman.remove-from-cart', $item->id) }}" method="POST">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" class="text-red-600 hover:text-red-900">Remove</button>
@@ -36,8 +38,11 @@
                             </tbody>
                         </table>
                         <div class="mt-4">
-                            <form action="{{ route('peminjaman.checkout') }}" method="POST">
+                            <form action="{{ route('peminjaman.requestBorrow') }}" method="POST">
                                 @csrf
+                                @foreach($cartItems as $item)
+                                    <input type="hidden" name="cart_ids[]" value="{{ $item->id }}">
+                                @endforeach
                                 <button type="submit" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
                                     Checkout
                                 </button>

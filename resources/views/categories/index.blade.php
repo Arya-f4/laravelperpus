@@ -5,12 +5,12 @@
                 <div class="p-6 bg-gray-800">
                     <div class="flex justify-between items-center mb-6">
                         <h2 class="text-2xl font-semibold text-gray-800">Categories Management</h2>
-                        @can('create categories')
+                        @if (Auth::user()->role_id == 1)
                             <a href="{{ route('categories.create') }}"
                                 class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                                 Add New Category
                             </a>
-                        @endcan
+                        @endif
                     </div>
 
                     <section class="container px-4 mx-auto">
@@ -30,7 +30,7 @@
                                                             <button class="flex items-center gap-x-2">
                                                                 <span>ID</span>
 
-                                                                
+
                                                             </button>
                                                         </div>
                                                     </th>
@@ -45,7 +45,7 @@
                                                         Slug
                                                     </th>
 
-                                                    <th scope="col" 
+                                                    <th scope="col"
                                                         class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
                                                         Actions
                                                     </th>
@@ -76,14 +76,16 @@
                                                             </div>
                                                         </td>
                                                         <td class="px-4 py-4 text-sm whitespace-nowrap">
-                                                            @can('edit categories')
+                                                            @if (Auth::user()->role_id == 1 || Auth::user()->role_id == 2)
                                                                 <a href="{{ route('categories.edit', $category) }}"
                                                                     class="text-indigo-600 hover:text-indigo-900 mr-3">
                                                                     Edit
                                                                 </a>
-                                                            @endcan
-                                                            @can('delete categories')
-                                                                <form action="{{ route('categories.destroy', $category) }}"
+                                                            @endif
+
+                                                            @if (Auth::user()->role_id == 1 || Auth::user()->role_id == 2)
+                                                                <form
+                                                                    action="{{ route('categories.destroy', $category) }}"
                                                                     method="POST" class="inline">
                                                                     @csrf
                                                                     @method('DELETE')
@@ -93,7 +95,7 @@
                                                                         Delete
                                                                     </button>
                                                                 </form>
-                                                            @endcan
+                                                            @endif
                                                         </td>
                                                     </tr>
                                                 @endforeach

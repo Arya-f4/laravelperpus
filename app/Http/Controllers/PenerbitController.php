@@ -38,15 +38,13 @@ class PenerbitController extends Controller
         return view('publishers.edit', compact('publisher'));
     }    
 
-    public function update(Request $request, Penerbit $publisher)
+    public function update(Request $request, $publisher)
     {
-        $validated = $request->validate([
-            'nama' => 'required|string|max:255',
-        ]);
+        $publisher = Penerbit::find($publisher);
+        $publisher->nama = $request->nama;
+        $publisher->slug = $request->nama;
 
-        $validated['slug'] = Str::slug($validated['nama']);
-
-        $publisher->update($validated);
+        $publisher->save();
 
         return redirect()->route('publishers.index')->with('success', 'Publisher updated successfully.');
     }

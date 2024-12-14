@@ -4,13 +4,20 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\Factory;
+
 class Buku extends Model
 {
 
     protected $table = 'buku';
     protected $fillable = [
-        'judul', 'slug', 'penerbit_id', 'kategori_id',
-        'rak_id', 'stok', 'sampul', 'penulis'
+        'judul',
+        'slug',
+        'penerbit_id',
+        'kategori_id',
+        'rak_id',
+        'stok',
+        'sampul',
+        'penulis'
     ];
 
     public function kategori()
@@ -28,8 +35,13 @@ class Buku extends Model
         return $this->belongsTo(Rak::class);
     }
 
+    // public function peminjaman()
+    // {
+    //     return $this->hasMany(Peminjaman::class);
+    // }
+
     public function peminjaman()
     {
-        return $this->hasMany(Peminjaman::class);
+        return $this->belongsToMany(Peminjaman::class, 'detail_peminjaman', 'buku_id', 'peminjaman_id');
     }
 }

@@ -24,6 +24,7 @@ class UserSeeder extends Seeder
             'name' => 'admin',
             'email' => 'admin@gmail.com',
             'password' => bcrypt('123123123'),
+            'role_id' => 1, // admin
             'email_verified_at' => now()
         ]);
         $admin->assignRole($adminRole);
@@ -32,6 +33,7 @@ class UserSeeder extends Seeder
             'name' => 'petugas',
             'email' => 'petugas@gmail.com',
             'password' => bcrypt('123123123'),
+            'role_id' => 2, // petugas
             'email_verified_at' => now()
         ]);
         $petugas->assignRole($petugasRole);
@@ -40,6 +42,7 @@ class UserSeeder extends Seeder
             'name' => 'peminjam',
             'email' => 'peminjam@gmail.com',
             'password' => bcrypt('123123123'),
+            'role_id' => 3,
             'email_verified_at' => now()
         ]);
         $peminjam1->assignRole($peminjamRole);
@@ -48,6 +51,7 @@ class UserSeeder extends Seeder
             'name' => 'musyahya',
             'email' => 'musyahya@gmail.com',
             'password' => bcrypt('123123123'),
+            'role_id' => 3,
             'email_verified_at' => now()
         ]);
         $peminjam2->assignRole($peminjamRole);
@@ -56,6 +60,7 @@ class UserSeeder extends Seeder
             'name' => 'yahya',
             'email' => 'yahya@gmail.com',
             'password' => bcrypt('123123123'),
+            'role_id' => 3,
             'email_verified_at' => now()
         ]);
         $peminjam3->assignRole($peminjamRole);

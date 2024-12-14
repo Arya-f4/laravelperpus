@@ -32,7 +32,7 @@ Route::get('/check-role', function () {
 });
 
 // Authentication routes
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
 
 // Authenticated routes
 Route::middleware(['auth'])->group(function () {
@@ -41,15 +41,20 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-
+    
     // Peminjaman routes for peminjam
     Route::post('/books/{buku}/borrow', [PeminjamanController::class, 'requestBorrow'])->name('books.request-borrow');
     Route::get('/peminjaman', [PeminjamanController::class, 'userIndex'])->name('peminjaman.user-index');
     Route::get('/my-borrowings', [PeminjamanController::class, 'userIndex'])->name('peminjaman.user-index');
     Route::post('/books/{buku}/add-to-cart', [PeminjamanController::class, 'addToCart'])->name('books.add-to-cart');
     Route::get('/cart', [PeminjamanController::class, 'viewCart'])->name('peminjaman.cart');
+    Route::delete('/cart/remove/{id}', [PeminjamanController::class, 'removeFromCart'])->name('peminjaman.remove-from-cart');
     Route::post('/cart/checkout', [PeminjamanController::class, 'checkout'])->name('peminjaman.checkout');
 
+    Route::post('/peminjaman/requestBorrow', [PeminjamanController::class, 'requestBorrow'])->name('peminjaman.requestBorrow');
+    Route::get('/peminjaman/confirmBorrow/{id}', [PeminjamanController::class, 'confirmBorrow'])->name('peminjaman.confirmBorrow');
+    Route::get('/peminjaman/show/{id}', [PeminjamanController::class, 'show'])->name('peminjaman.show');
+    Route::get('/peminjaman/returnBook/{id}', [PeminjamanController::class, 'returnBook'])->name('peminjaman.returnBook');
 
 });
 
@@ -80,153 +85,37 @@ Route::middleware(['auth'])->group(function () {
         }
     })->name('admin.books.index');
 
-//TODO: Rek tolong yang ini jadiin kayak yang diatas ya please, capek banget satu satu ngasih routing
+    //TODO: Rek tolong yang ini jadiin kayak yang diatas ya please, capek banget satu satu ngasih routing
     // Route::resource('categories', KategoriController::class)->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
     // Route::resource('books', BukuController::class)->except(['index', 'show']);
     // Route::resource('publishers', PenerbitController::class);
     // Route::resource('racks', RakController::class);
 
     // categories
-    Route::get('/categories/index', function () {
-        if (Auth::user()->getRoleNames()->first() === 'admin') {
-            return (new KategoriController())->index();
-        } else {
-            return redirect()->route('user.dashboard');
-        }
-    })->name('categories.index');
-
-    Route::get('/categories/create', function () {
-        if (Auth::user()->getRoleNames()->first() === 'admin') {
-            return (new KategoriController())->create();
-        } else {
-            return redirect()->route('user.dashboard');
-        }
-    })->name('categories.create');
-
-    Route::get('/categories/store', function () {
-        if (Auth::user()->getRoleNames()->first() === 'admin') {
-            return (new KategoriController())->store();
-        } else {
-            return redirect()->route('user.dashboard');
-        }
-    })->name('categories.store');
-
-    Route::get('/categories/edit/{id}', function () {
-        if (Auth::user()->getRoleNames()->first() === 'admin') {
-            return (new KategoriController())->edit();
-        } else {
-            return redirect()->route('user.dashboard');
-        }
-    })->name('categories.edit');
-
-    Route::get('/categories/update/{id}', function () {
-        if (Auth::user()->getRoleNames()->first() === 'admin') {
-            return (new KategoriController())->update();
-        } else {
-            return redirect()->route('user.dashboard');
-        }
-    })->name('categories.update');
-
-    Route::get('/categories/destroy/{id}', function () {
-        if (Auth::user()->getRoleNames()->first() === 'admin') {
-            return (new KategoriController())->destroy();
-        } else {
-            return redirect()->route('user.dashboard');
-        }
-    })->name('categories.destroy');
+    Route::get('/categories/index', [KategoriController::class, 'index'])->name('categories.index');
+    Route::get('/categories/create', [KategoriController::class, 'create'])->name('categories.create');
+    Route::post('/categories/store', [KategoriController::class, 'store'])->name('categories.store');
+    Route::get('/categories/edit/{id}', [KategoriController::class, 'edit'])->name('categories.edit');
+    Route::post('/categories/update/{id}', [KategoriController::class, 'update'])->name('categories.update');
+    Route::delete('/categories/destroy/{id}', [KategoriController::class, 'destroy'])->name('categories.destroy');
 
 
     // Books
-    Route::get('/books/create', function () {
-        if (Auth::user()->getRoleNames()->first() === 'admin') {
-            return (new BukuController())->create();
-        } else {
-            return redirect()->route('user.dashboard');
-        }
-    })->name('books.create');
+    Route::get('/admin/books', [BukuController::class, 'index'])->name('books.index');
+    Route::get('/admin/books/create', [BukuController::class, 'create'])->name('books.create');
+    Route::post('/admin/books/store', [BukuController::class, 'store'])->name('books.store');
+    Route::get('/admin/books/{id}/edit', [BukuController::class, 'edit'])->name('books.edit');
+    Route::put('/admin/books/{id}/update', [BukuController::class, 'update'])->name('books.update');
+    Route::delete('/admin/books/{id}/destroy', [BukuController::class, 'destroy'])->name('books.destroy');
 
-    Route::get('/books/store', function () {
-        if (Auth::user()->getRoleNames()->first() === 'admin') {
-            return (new BukuController())->store();
-        } else {
-            return redirect()->route('user.dashboard');
-        }
-    })->name('books.store');
+    // Publishers
+    Route::get('/admin/publishers', [PenerbitController::class, 'index'])->name('publishers.index');
+    Route::get('/admin/publishers/create', [PenerbitController::class, 'create'])->name('publishers.create');
+    Route::post('/admin/publishers/store', [PenerbitController::class, 'store'])->name('publishers.store');
+    Route::get('/admin/publishers/{id}/edit', [PenerbitController::class, 'edit'])->name('publishers.edit');
+    Route::put('/admin/publishers/{id}/update', [PenerbitController::class, 'update'])->name('publishers.update');
+    Route::delete('/admin/publishers/{id}/destroy', [PenerbitController::class, 'destroy'])->name('publishers.destroy');
 
-    Route::get('/books/edit/{id}', function () {
-        if (Auth::user()->getRoleNames()->first() === 'admin') {
-            return (new BukuController())->edit();
-        } else {
-            return redirect()->route('user.dashboard');
-        }
-    })->name('books.edit');
-
-    Route::get('/books/update/{id}', function () {
-        if (Auth::user()->getRoleNames()->first() === 'admin') {
-            return (new BukuController())->update();
-    
-        } else {
-            return redirect()->route('user.dashboard');
-        }
-    })->name('books.update');
-
-    Route::get('/books/destroy/{id}', function () {
-        if (Auth::user()->getRoleNames()->first() === 'admin') {
-            return (new BukuController())->destroy();
-        } else {
-            return redirect()->route('user.dashboard');
-        }
-    })->name('books.destroy');
-
-
-    // publishers
-    Route::get('/publishers/index', function () {
-        if (Auth::user()->getRoleNames()->first() === 'admin') {
-            return (new PenerbitController())->index();
-        } else {
-            return redirect()->route('user.dashboard');
-        }
-    })->name('publishers.index');
-
-    Route::get('/publishers/create', function () {
-        if (Auth::user()->getRoleNames()->first() === 'admin') {
-            return (new PenerbitController())->create();
-        } else {
-            return redirect()->route('user.dashboard');
-        }
-    })->name('publishers.create');
-
-    Route::get('/publishers/store', function () {
-        if (Auth::user()->getRoleNames()->first() === 'admin') {
-            return (new PenerbitController())->store();
-        } else {
-            return redirect()->route('user.dashboard');
-        }
-    })->name('publishers.store');
-
-    Route::get('/publishers/edit/{id}', function ($id) {
-        if (Auth::user()->getRoleNames()->first() === 'admin') {
-            return (new App\Http\Controllers\PenerbitController())->edit($id);
-        } else {
-            return redirect()->route('user.dashboard');
-        }
-    })->name('publishers.edit');    
-
-    Route::get('/publishers/update/{id}', function () {
-        if (Auth::user()->getRoleNames()->first() === 'admin') {
-            return (new PenerbitController())->update();
-        } else {
-            return redirect()->route('user.dashboard');
-        }
-    })->name('publishers.update');
-
-    Route::get('/publishers/destroy/{id}', function () {
-        if (Auth::user()->getRoleNames()->first() === 'admin') {
-            return (new PenerbitController())->destroy();
-        } else {
-            return redirect()->route('user.dashboard');
-        }
-    })->name('publishers.destroy');
 
 
     // racks

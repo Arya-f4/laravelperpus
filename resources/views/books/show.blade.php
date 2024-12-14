@@ -46,21 +46,28 @@
 
                     
                         @auth
-                            @if (auth()->user()->role === 'peminjam')
+                            @if (Auth::user()->role_id == 3)
                                 @if ($book->stok > 0)
-                                    <form action="{{ route('books.borrow', $book) }}" method="POST">
+                                    <form action="{{ route('books.request-borrow', $book->id) }}" method="POST">
                                         @csrf
                                         <button type="submit"
                                             class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                                             Borrow this Book
                                         </button>
                                     </form>
+                                    <form action="{{ route('books.add-to-cart', $book->id) }}" method="POST">
+                                        @csrf
+                                        <button type="submit"
+                                            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                                            Add to Cart
+                                        </button>
+                                    </form>
                                 @else
                                     <p class="text-red-600 font-semibold">This book is currently out of stock.</p>
                                 @endif
-                            @elseif(in_array(auth()->user()->role, ['admin', 'petugas']))
+                            @elseif(Auth::user()->role_id == 1 || Auth::user()->role_id == 2)
                                 <div class="mt-4">
-                                    <a href="{{ route('books.edit', $book) }}"
+                                    <a href="{{ route('books.edit', $book->id) }}"
                                         class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded">
                                         Edit Book
                                     </a>

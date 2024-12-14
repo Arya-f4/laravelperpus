@@ -30,6 +30,7 @@ class PeminjamanSeeder extends Seeder
                 'name' => $faker->name(),
                 'email' => $faker->email(),
                 'password' => Hash::make('123123123'),
+                'role_id' => 3,
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);

@@ -11,7 +11,7 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 g-gray-800">
-                    @if (auth()->user() && in_array(auth()->user()->role, ['admin', 'petugas']))
+                    @if (Auth::user()->role_id == 1 || Auth::user()->role_id == 2)
                         <div class="mb-4">
                             <a href="{{ route('books.create') }}"
                                 class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
