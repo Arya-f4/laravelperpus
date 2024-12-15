@@ -11,7 +11,7 @@ class Peminjaman extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'users_id');
+        return $this->belongsTo(User::class, 'id');
     }
 
     public function buku()
@@ -21,11 +21,16 @@ class Peminjaman extends Model
 
     public function denda()
     {
-        return $this->hasOne(Denda::class);
+        return $this->hasOne(Denda::class, 'peminjaman_id');
     }
 
     public function bukus()
     {
         return $this->belongsToMany(Buku::class, 'detail_peminjaman', 'peminjaman_id', 'buku_id');
+    }
+
+    public function detailPeminjaman()
+    {
+        return $this->hasMany(DetailPeminjaman::class, 'peminjaman_id');
     }
 }

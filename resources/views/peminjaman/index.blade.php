@@ -33,36 +33,28 @@
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead class="bg-gray-50">
                                 <tr>
-                                    <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         ID
                                     </th>
-                                    <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Borrow Code
                                     </th>
-                                    <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Book
                                     </th>
-                                    <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         User
                                     </th>
-                                    <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Borrow Date
                                     </th>
-                                    <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Return Date
                                     </th>
-                                    <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Status
                                     </th>
-                                    <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Actions
                                     </th>
                                 </tr>
@@ -82,7 +74,9 @@
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <div class="text-sm text-gray-500">
-                                                {{ $pinjam->nama ?? 'N/A' }}
+                                                @foreach ($pinjam->detailPeminjaman as $detail)
+                                                    {{ $detail->buku->judul ?? 'N/A' }}<br>
+                                                @endforeach
                                             </div>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
@@ -102,78 +96,54 @@
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             @if ($pinjam->status == 1)
-                                                <span
-                                                    class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
                                                     Dipinjam
                                                 </span>
                                             @elseif ($pinjam->status == 2)
-                                                <span
-                                                    class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
                                                     Ditolak
                                                 </span>
                                             @elseif ($pinjam->status == 0)
-                                                <span
-                                                    class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
                                                     Menunggu
                                                 </span>
                                             @else
-                                                <span
-                                                    class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
                                                     Sudah Dikembalikan
                                                 </span>
                                             @endif
-                                            {{-- <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full">
-                                                {{ $pinjam->status ?? 'N/A' }}
-                                            </span> --}}
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                            {{-- @if ($pinjam->status == 1)
-                                                <form action="{{ route('peminjaman.update', $pinjam) }}" method="POST"
-                                                    class="inline">
-                                                    @csrf
-                                                    @method('PUT')
-                                                    <input type="hidden" name="return" value="1">
-                                                    <button type="submit"
-                                                        class="text-indigo-600 hover:text-indigo-900">
-                                                        Return
-                                                    </button>
-                                                </form>
-                                            @endif --}}
-                                            @if ($pinjam->status == 0)
-                                                <a href="{{ route('peminjaman.show', $pinjam->id) }}">Detail</a>
-                                                {{-- <a href="{{ route('peminjaman.confirmBorrow', $pinjam->id) }}"
-                                                    class=" text-indigo-600 hover:text-indigo-900 ml-2">Approve</a>
-                                                <a href="{{ route('peminjaman.confirmBorrow', $pinjam->id) }}"
-                                                    class=" text-red-600 hover:text-red-900 ml-2">Ditolak</a> --}}
-                                            @endif
-                                            @if ($pinjam->status == 1)
-                                                <a href="{{ route('peminjaman.returnBook', $pinjam->id) }}"
-                                                    class="te   xt-blue-600 hover:text-blue-900">Kembalikan</a>
-                                            @endif
-                                            @if ($pinjam->status == 2 || $pinjam->status == 3)
-                                                <form action="#" method="POST" class="inline ml-2">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="text-red-600 hover:text-red-900"
-                                                        onclick="return confirm('Are you sure you want to delete this record?')">Delete</button>
-                                                </form>
-                                                {{-- <form action="{{ route('peminjaman.destroy', $pinjam) }}" method="POST" class="inline ml-2">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="text-red-600 hover:text-red-900" onclick="return confirm('Are you sure you want to delete this record?')">Delete</button>
-                                                </form> --}}
-                                            @endif
-                                            @if ($pinjam->denda && !$pinjam->denda->is_paid)
-                                                <form action="{{ route('peminjaman.pay-fine', $pinjam->denda) }}"
-                                                    method="POST" class="inline ml-2">
-                                                    @csrf
-                                                    <button type="submit" class="text-red-600 hover:text-red-900">
-                                                        Pay Fine (Rp.
-                                                        {{ number_format($pinjam->denda->total_denda, 0, ',', '.') }})
-                                                    </button>
-                                                </form>
-                                            @endif
-                                        </td>
+                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+    @if(auth()->user()->hasRole(['admin', 'petugas']))
+        @if ($pinjam->status == 1)
+            <a href="{{ route('peminjaman.return', $pinjam->id) }}"
+                class="text-blue-600 hover:text-blue-900">Return Book</a>
+        @endif
+    @endif
+    @if ($pinjam->status == 2 || $pinjam->status == 3)
+        <form action="{{ route('peminjaman.destroy', $pinjam->id) }}" method="POST" class="inline ml-2">
+            @csrf
+            @method('DELETE')
+            <button type="submit" class="text-red-600 hover:text-red-900"
+                onclick="return confirm('Are you sure you want to delete this record?')">Delete</button>
+        </form>
+    @endif
+
+    @php
+    $bayar = \App\Models\Denda::where('peminjaman_id', $pinjam->id)->first();
+@endphp
+
+@if ($bayar && $bayar->is_paid == 0)
+    <form action="{{ route('peminjaman.pay-fine', $bayar->id) }}"
+        method="POST" class="inline ml-2">
+        @csrf
+        <button type="submit" class="text-red-600 hover:text-red-900">
+            Pay Fine (Rp.
+            {{ number_format($bayar->total_denda, 0, ',', '.') }})
+        </button>
+    </form>
+@endif
+</td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -187,3 +157,4 @@
         </div>
     </div>
 </x-app-layout>
+

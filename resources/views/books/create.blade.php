@@ -40,7 +40,7 @@
                             <label for="rak_id" class="block text-gray-700 text-sm font-bold mb-2">Rack:</label>
                             <select name="rak_id" id="rak_id" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
                                 @foreach($racks as $rack)
-                                    <option value="{{ $rack->id }}">{{ $rack->nama }}</option>
+                                    <option value="{{ $rack->id }}">{{ $rack->rak }} - {{$rack->baris}} </option>
                                 @endforeach
                             </select>
                         </div>

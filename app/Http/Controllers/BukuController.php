@@ -9,13 +9,45 @@ use App\Models\Rak;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-
+use Yajra\DataTables\Facades\DataTables;
 class BukuController extends Controller
 {
     public function index()
     {
         $books = Buku::with(['kategori', 'penerbit', 'rak'])->paginate(10);
+        dd($books);
         return view('books.index', compact('books'));
+    }
+    public function data()
+    {
+        $books = Buku::with(['kategori', 'penerbit', 'rak']);
+
+        return DataTables::of($books)
+            ->addColumn('kategori', function ($book) {
+                return $book->kategori->nama;
+            })
+            ->addColumn('rak', function ($book) {
+                return $book->rak->nama . ' (Row: ' . $book->rak->baris . ')';
+            })
+            ->addColumn('actions', function ($book) {
+                $actions = '<a href="' . route('books.show', $book) . '" class="text-indigo-600 hover:text-indigo-900 mr-2">View</a>';
+
+                if (auth()->user()->can('update', $book)) {
+                    $actions .= '<a href="' . route('books.edit', $book) . '" class="text-yellow-600 hover:text-yellow-900 mr-2">Edit</a>';
+                }
+
+                if (auth()->user()->can('delete', $book)) {
+                    $actions .= '<form action="' . route('books.destroy', $book) . '" method="POST" class="inline">
+                        ' . csrf_field() . '
+                        ' . method_field('DELETE') . '
+                        <button type="submit" class="text-red-600 hover:text-red-900" onclick="return confirm(\'Are you sure you want to delete this book?\')">Delete</button>
+                    </form>';
+                }
+
+                return $actions;
+            })
+            ->rawColumns(['actions'])
+            ->make(true);
     }
 
     public function create()
@@ -26,27 +58,30 @@ class BukuController extends Controller
         return view('books.create', compact('categories', 'publishers', 'racks'));
     }
 
+
     public function store(Request $request)
     {
-        // Proses file sampul
-        $sampulPath = $request->file('sampul')->store('sampul', 'public');
-
-        // Data untuk disimpan
-        $data = [
-            'judul' => $request->input('judul'),
-            'penulis' => $request->input('penulis'),
-            'penerbit_id' => $request->input('penerbit_id'),
-            'kategori_id' => $request->input('kategori_id'),
-            'rak_id' => $request->input('rak_id'),
-            'stok' => $request->input('stok'),
-            'sampul' => $sampulPath,
+        $request->validate([
+            'judul' => 'required|string|max:255',
+            'penulis' => 'required|string|max:255',
+            'penerbit_id' => 'required|exists:penerbit,id',
+            'kategori_id' => 'required|exists:kategori,id',
+            'rak_id' => 'required|exists:rak,id',
+            'stok' => 'required|integer|min:0',
+            'sampul' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'slug' => Str::slug($request->input('judul')),
-        ];
+        ]);
 
-        // Simpan data ke database
+        $data = $request->all();
+        $data['slug'] = Str::slug($request->judul);
+
+        if ($request->hasFile('sampul')) {
+            $sampulPath = $request->file('sampul')->store('sampul', 'public');
+            $data['sampul'] = $sampulPath;
+        }
+
         Buku::create($data);
 
-        // Redirect ke halaman index buku dengan pesan sukses
         return redirect()->route('books.index')->with('success', 'Book created successfully.');
     }
 
@@ -59,41 +94,35 @@ class BukuController extends Controller
         return view('books.edit', compact('book', 'categories', 'publishers', 'racks'));
     }
 
-    public function update(Request $request, $book)
+    public function update(Request $request, Buku $buku)
     {
-        // Pastikan $book adalah instance model
-    $book = Buku::findOrFail($book);
+        $request->validate([
+            'judul' => 'required|string|max:255',
+            'penulis' => 'required|string|max:255',
+            'penerbit_id' => 'required|exists:penerbit,id',
+            'kategori_id' => 'required|exists:kategori,id',
+            'rak_id' => 'required|exists:rak,id',
+            'stok' => 'required|integer|min:0',
+            'sampul' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
 
-        // Data untuk diupdate
-        $data = [
-            'judul' => $request->input('judul'),
-            'penulis' => $request->input('penulis'),
-            'penerbit_id' => $request->input('penerbit_id'),
-            'kategori_id' => $request->input('kategori_id'),
-            'rak_id' => $request->input('rak_id'),
-            'stok' => $request->input('stok'),
-        ];
+        $data = $request->except(['_token', '_method']);
 
-        // Proses file sampul jika diunggah
+        $data['slug'] = Str::slug($request->judul);
+
         if ($request->hasFile('sampul')) {
-            // Hapus sampul lama jika ada
-            if ($book->sampul && Storage::exists('public/' . $book->sampul)) {
-                Storage::delete('public/' . $book->sampul);
-            }
-
             $sampulPath = $request->file('sampul')->store('sampul', 'public');
             $data['sampul'] = $sampulPath;
         }
-
-        // Generate slug
-        $data['slug'] = Str::slug($request->input('judul'));
-
-        // Update data ke database
-        $book->update($data);
-
-        // Redirect ke halaman index buku dengan pesan sukses
-        return redirect()->route('books.index')->with('success', 'Book updated successfully.');
-    }
+        $id = $request->id;
+        $book = Buku::find($id);
+        if ($book) {
+            $book->update($data);
+            return redirect()->route('books.index')->with('success', 'Book updated successfully.');
+        } else {
+            return redirect()->route('books.index')->with('error', 'Book not found.');
+        }
+     }
 
     public function destroy($book)
     {

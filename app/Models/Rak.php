@@ -13,4 +13,8 @@ class Rak extends Model
     {
         return $this->hasMany(Buku::class);
     }
+    public function kategori()
+    {
+        return $this->belongsTo(Kategori::class);
+    }
 }

@@ -24,7 +24,8 @@ class KategoriController extends Controller
 
         $validated = [
             'nama' => $request->nama,
-            'slug' => $request->nama
+            'slug' => Str::slug($request->input('nama'))
+
         ];
 
         Kategori::create($validated);

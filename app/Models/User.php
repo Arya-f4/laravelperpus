@@ -40,4 +40,31 @@ class User extends Authenticatable
     {
         return $this->hasMany(Peminjaman::class, 'users_id');
     }
+
+
+protected static function booted()
+{
+    // Automatically set the default role_id on user creation
+    static::creating(function ($user) {
+        if (!$user->role_id) {
+            $defaultRole = \Spatie\Permission\Models\Role::where('name', 'peminjam')->first();
+
+            // Ensure the default role exists in your database
+            if ($defaultRole) {
+                $user->role_id = $defaultRole->id; // Assign role_id from the database
+            }
+        }
+    });
+
+    // Assign Spatie role after the user is created
+    static::created(function ($user) {
+        $role = \Spatie\Permission\Models\Role::find($user->role_id);
+
+        // Assign the role using Spatie's method
+        if ($role) {
+            $user->assignRole($role->name);
+        }
+    });
+}
+
 }

@@ -20,6 +20,7 @@
                         <thead class="bg-gray-50">
                             <tr>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium  text-gray-500 uppercase tracking-wider">Kategori</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Row</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                             </tr>
@@ -27,7 +28,8 @@
                         <tbody class="bg-white divide-y divide-gray-200">
                             @foreach($racks as $rack)
                                 <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap">{{ $rack->nama }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">{{ $rack->rak }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">{{ $rack->kategori->nama }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap">{{ $rack->baris }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                         <a href="{{ route('racks.edit', $rack) }}" class="text-indigo-600 hover:text-indigo-900 mr-2">Edit</a>

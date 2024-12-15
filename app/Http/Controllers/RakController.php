@@ -3,13 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\Rak;
+use App\Models\Kategori;
 use Illuminate\Http\Request;
 
 class RakController extends Controller
 {
     public function index()
     {
-        $racks = Rak::paginate(10);
+        $racks = Rak::with('kategori')->paginate(10);
+
         return view('racks.index', compact('racks'));
     }
 
@@ -34,14 +36,16 @@ class RakController extends Controller
     public function edit($id)
     {
         $rack = Rak::findOrFail($id);
-        return view('racks.edit', compact('rack'));
+        $categories= Kategori::all();
+        return view('racks.edit', compact('rack','categories'));
     }
 
     public function update(Request $request, Rak $rack)
     {
         $validated = $request->validate([
-            'nama' => 'required|string|max:255',
+            'rak' => 'required|string|max:255',
             'baris' => 'required|integer|min:1',
+            'kategori_id'=> 'required|exists:kategori,id',
             'slug' => 'required|string|unique:rak,slug,' . $rack->id,
         ]);
 

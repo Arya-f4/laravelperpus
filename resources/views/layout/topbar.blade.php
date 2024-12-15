@@ -36,6 +36,9 @@
                             <x-nav-link :href="route('peminjaman.index')" :active="request()->routeIs('peminjaman.*')">
                                 {{ __('Manage Borrowings') }}
                             </x-nav-link>
+                            <x-nav-link :href="route('denda.index')" :active="request()->routeIs('denda.index')">
+                                {{ __('Fines') }}
+                            </x-nav-link>
                         @else
                             <x-nav-link :href="route('user.dashboard')" :active="request()->routeIs('user.dashboard')">
                                 {{ __('User Dashboard') }}
@@ -46,6 +49,7 @@
                             <x-nav-link :href="route('peminjaman.cart')" :active="request()->routeIs('peminjaman.cart')">
                                 {{ __('Cart') }}
                             </x-nav-link>
+
                         @endif
                     @endauth
                 </div>
@@ -136,6 +140,9 @@
                     <x-responsive-nav-link :href="route('peminjaman.index')" :active="request()->routeIs('peminjaman.*')">
                         {{ __('Manage Borrowings') }}
                     </x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('denda.index')" :active="request()->routeIs('denda.index')">
+                        {{ __('Fines') }}
+                    </x-responsive-nav-link>
                 @else
                     <x-responsive-nav-link :href="route('user.dashboard')" :active="request()->routeIs('user.dashboard')">
                         {{ __('User Dashboard') }}
@@ -143,6 +150,7 @@
                     <x-responsive-nav-link :href="route('peminjaman.index')" :active="request()->routeIs('peminjaman.user-index')">
                         {{ __('My Borrowings') }}
                     </x-responsive-nav-link>
+
                 @endif
             @endauth
         </div>

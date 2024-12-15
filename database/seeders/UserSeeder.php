@@ -24,45 +24,29 @@ class UserSeeder extends Seeder
             'name' => 'admin',
             'email' => 'admin@gmail.com',
             'password' => bcrypt('123123123'),
-            'role_id' => 1, // admin
+            'role_id' =>  $adminRole->id, // admin
             'email_verified_at' => now()
         ]);
-        $admin->assignRole($adminRole);
+        $admin->assignRole('admin');
 
         $petugas = User::create([
             'name' => 'petugas',
             'email' => 'petugas@gmail.com',
             'password' => bcrypt('123123123'),
-            'role_id' => 2, // petugas
-            'email_verified_at' => now()
+            'role_id' => $petugasRole->id, // petugas
+            'email_verified_at' => now(),
         ]);
-        $petugas->assignRole($petugasRole);
+        $petugas->assignRole('petugas');
 
         $peminjam1 = User::create([
             'name' => 'peminjam',
             'email' => 'peminjam@gmail.com',
             'password' => bcrypt('123123123'),
-            'role_id' => 3,
+            'role_id' => $peminjamRole->id,
             'email_verified_at' => now()
         ]);
         $peminjam1->assignRole($peminjamRole);
 
-        $peminjam2 = User::create([
-            'name' => 'musyahya',
-            'email' => 'musyahya@gmail.com',
-            'password' => bcrypt('123123123'),
-            'role_id' => 3,
-            'email_verified_at' => now()
-        ]);
-        $peminjam2->assignRole($peminjamRole);
 
-        $peminjam3 = User::create([
-            'name' => 'yahya',
-            'email' => 'yahya@gmail.com',
-            'password' => bcrypt('123123123'),
-            'role_id' => 3,
-            'email_verified_at' => now()
-        ]);
-        $peminjam3->assignRole($peminjamRole);
     }
 }

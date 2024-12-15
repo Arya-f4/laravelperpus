@@ -13,7 +13,14 @@ return [
     | a conventional file to locate the various service credentials.
     |
     */
-
+ 'midtrans' => [
+        'merchant_id' => env('MIDTRANS_MERCHANT_ID', 'G002540925'),
+        'client_key' => env('MIDTRANS_CLIENT_KEY', 'SB-Mid-client-lqag17nxLSgE0yGI'),
+        'server_key' => env('MIDTRANS_SERVER_KEY', 'SB-Mid-server-UAB0_EU6SLgJxqCluMTX_X2K'),
+        'is_production' => env('MIDTRANS_IS_PRODUCTION', false),
+        'is_sanitized' => env('MIDTRANS_IS_SANITIZED', true),
+        'is_3ds' => env('MIDTRANS_IS_3DS', true),
+    ],
     'postmark' => [
         'token' => env('POSTMARK_TOKEN'),
     ],

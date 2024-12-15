@@ -7,9 +7,11 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PenerbitController;
 use App\Http\Controllers\RakController;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SettingController;
+use App\Http\Controllers\DendaController;
+use Illuminate\Support\Facades\Route;
 use App\Models\Buku;
+use App\Http\Controllers\MidtransController;
 use Illuminate\Support\Facades\Auth;
 
 
@@ -19,180 +21,106 @@ Route::get('/', function () {
     return view('home', compact('books'));
 })->name('home');
 
-
 Route::get('/books', [BukuController::class, 'index'])->name('books.index');
 Route::get('/books/{slug}', [BukuController::class, 'show'])->name('books.show');
-// Example to check role in a route
+
+
+// Example role check
 Route::get('/check-role', function () {
-    if (Auth::user()->getRoleNames()->first() === 'admin') {
-        return "User has admin role!";
+
+    if (auth()->user()->role_id == 1 ||auth()->user()->hasRole('admin')) {
+        dd('User is an admin');
     } else {
-        return "User does not have admin role!";
+        dd('User is not an admin');
     }
+
 });
+
 
 // Authentication routes
 require __DIR__ . '/auth.php';
+Route::middleware(['auth', 'roleid:1'])->get('/test-roleid', function () {
+    return 'You have the correct role!';
+});
+
 
 // Authenticated routes
 Route::middleware(['auth'])->group(function () {
+    // Dashboard & Profile
     Route::get('/dashboard', [DashboardController::class, 'userDashboard'])->name('user.dashboard');
-
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    
-    // Peminjaman routes for peminjam
-    Route::post('/books/{buku}/borrow', [PeminjamanController::class, 'requestBorrow'])->name('books.request-borrow');
-    Route::get('/peminjaman', [PeminjamanController::class, 'userIndex'])->name('peminjaman.user-index');
     Route::get('/my-borrowings', [PeminjamanController::class, 'userIndex'])->name('peminjaman.user-index');
+
+    // Books for authenticated users
+    Route::post('/books/{buku}/borrow', [PeminjamanController::class, 'requestBorrow'])->name('books.request-borrow');
+
+    Route::get('/books/data', [BukuController::class, 'data'])->name('books.data');
     Route::post('/books/{buku}/add-to-cart', [PeminjamanController::class, 'addToCart'])->name('books.add-to-cart');
-    Route::get('/cart', [PeminjamanController::class, 'viewCart'])->name('peminjaman.cart');
-    Route::delete('/cart/remove/{id}', [PeminjamanController::class, 'removeFromCart'])->name('peminjaman.remove-from-cart');
-    Route::post('/cart/checkout', [PeminjamanController::class, 'checkout'])->name('peminjaman.checkout');
-
-    Route::post('/peminjaman/requestBorrow', [PeminjamanController::class, 'requestBorrow'])->name('peminjaman.requestBorrow');
-    Route::get('/peminjaman/confirmBorrow/{id}', [PeminjamanController::class, 'confirmBorrow'])->name('peminjaman.confirmBorrow');
-    Route::get('/peminjaman/show/{id}', [PeminjamanController::class, 'show'])->name('peminjaman.show');
-    Route::get('/peminjaman/returnBook/{id}', [PeminjamanController::class, 'returnBook'])->name('peminjaman.returnBook');
-
-});
-
-// Admin and Petugas routes
-Route::middleware(['auth'])->group(function () {
-    Route::get('/admin/dashboard', function () {
-        if (Auth::user()->getRoleNames()->first() === 'admin') {
-            return (new DashboardController())->adminDashboard();
-        } else {
-            return redirect()->route('user.dashboard');
-        }
-    })->name('admin.dashboard');
-
-    // Admin routes for managing books, categories, and more
-    Route::get('/admin/categories', function () {
-        if (Auth::user()->getRoleNames()->first() === 'admin') {
-            return (new KategoriController())->index();
-        } else {
-            return redirect()->route('user.dashboard');
-        }
-    })->name('admin.categories.index');
-
-    Route::get('/admin/books', function () {
-        if (Auth::user()->getRoleNames()->first() === 'admin') {
-            return (new BukuController())->index();
-        } else {
-            return redirect()->route('user.dashboard');
-        }
-    })->name('admin.books.index');
-
-    //TODO: Rek tolong yang ini jadiin kayak yang diatas ya please, capek banget satu satu ngasih routing
-    // Route::resource('categories', KategoriController::class)->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
-    // Route::resource('books', BukuController::class)->except(['index', 'show']);
-    // Route::resource('publishers', PenerbitController::class);
-    // Route::resource('racks', RakController::class);
-
-    // categories
-    Route::get('/categories/index', [KategoriController::class, 'index'])->name('categories.index');
-    Route::get('/categories/create', [KategoriController::class, 'create'])->name('categories.create');
-    Route::post('/categories/store', [KategoriController::class, 'store'])->name('categories.store');
-    Route::get('/categories/edit/{id}', [KategoriController::class, 'edit'])->name('categories.edit');
-    Route::post('/categories/update/{id}', [KategoriController::class, 'update'])->name('categories.update');
-    Route::delete('/categories/destroy/{id}', [KategoriController::class, 'destroy'])->name('categories.destroy');
 
 
-    // Books
-    Route::get('/admin/books', [BukuController::class, 'index'])->name('books.index');
-    Route::get('/admin/books/create', [BukuController::class, 'create'])->name('books.create');
-    Route::post('/admin/books/store', [BukuController::class, 'store'])->name('books.store');
-    Route::get('/admin/books/{id}/edit', [BukuController::class, 'edit'])->name('books.edit');
-    Route::put('/admin/books/{id}/update', [BukuController::class, 'update'])->name('books.update');
-    Route::delete('/admin/books/{id}/destroy', [BukuController::class, 'destroy'])->name('books.destroy');
+    Route::prefix('denda')->group(function () {
+        Route::get('/', [DendaController::class, 'index'])->name('denda.index');
+        Route::get('/pay/{denda}', [DendaController::class, 'pay'])->name('denda.pay');
+    });
+    // Borrowing routes
+    Route::prefix('peminjaman')->group(function () {
+        Route::post('/request', [PeminjamanController::class, 'requestBorrow'])->name('peminjaman.requestBorrow');
+        Route::get('/confirm/{id}', [PeminjamanController::class, 'confirmBorrow'])->name('peminjaman.confirmBorrow');
+        Route::get('/show/{id}', [PeminjamanController::class, 'show'])->name('peminjaman.show');
+        Route::get('/return/{id}', [PeminjamanController::class, 'returnBook'])->name('peminjaman.returnBook');
+        Route::get('/', [PeminjamanController::class, 'index'])->name('peminjaman.index');
+        Route::get('/my-borrowings', [PeminjamanController::class, 'userIndex'])->name('peminjaman.user-index');
+        Route::get('/{id}', [PeminjamanController::class, 'show'])->name('peminjaman.show');
+        Route::get('/{id}/approve', [PeminjamanController::class, 'approve'])
+        ->name('peminjaman.approve')
+        ->middleware('roleid:1,2');
+        Route::delete('/{id}/cancel', [PeminjamanController::class, 'cancel'])->name('peminjaman.cancel');
+        Route::get('/{id}/return', [PeminjamanController::class, 'returnBook'])
+            ->name('peminjaman.return')
+            ->middleware('role:admin,petugas');
+       });
 
-    // Publishers
-    Route::get('/admin/publishers', [PenerbitController::class, 'index'])->name('publishers.index');
-    Route::get('/admin/publishers/create', [PenerbitController::class, 'create'])->name('publishers.create');
-    Route::post('/admin/publishers/store', [PenerbitController::class, 'store'])->name('publishers.store');
-    Route::get('/admin/publishers/{id}/edit', [PenerbitController::class, 'edit'])->name('publishers.edit');
-    Route::put('/admin/publishers/{id}/update', [PenerbitController::class, 'update'])->name('publishers.update');
-    Route::delete('/admin/publishers/{id}/destroy', [PenerbitController::class, 'destroy'])->name('publishers.destroy');
+    // Cart Routes
+    Route::prefix('cart')->group(function () {
+        Route::post('/add/{buku}', [PeminjamanController::class, 'addToCart'])->name('books.add-to-cart');
+        Route::get('/', [PeminjamanController::class, 'viewCart'])->name('peminjaman.cart');
+        Route::delete('/remove/{id}', [PeminjamanController::class, 'removeFromCart'])->name('peminjaman.remove-from-cart');
+        Route::post('/checkout', [PeminjamanController::class, 'checkout'])->name('peminjaman.checkout');
+    });
 
+    // Admin and Petugas routes
+    Route::middleware(['auth','roleid:1'])->prefix('admin')->group(function () {
+        // Dashboard
+        Route::get('/dashboard', [DashboardController::class, 'adminDashboard'])->name('admin.dashboard');
 
+        // Resources
+        Route::resource('categories', KategoriController::class);
+        Route::resource('books', BukuController::class)->except(['index', 'show']);
+        Route::resource('publishers', PenerbitController::class);
+        Route::resource('racks', RakController::class);
 
-    // racks
-    Route::get('/racks/index', function () {
-        if (Auth::user()->getRoleNames()->first() === 'admin') {
-            return (new RakController())->index();
-        } else {
-            return redirect()->route('user.dashboard');
-        }
-    })->name('racks.index');
+        // Settings
+        Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
+        Route::post('/settings/update-cart-limit', [SettingController::class, 'updateCartLimit'])->name('settings.update-cart-limit');
 
-    Route::get('/racks/create', function () {
-        if (Auth::user()->getRoleNames()->first() === 'admin') {
-            return (new RakController())->create();
-        } else {
-            return redirect()->route('user.dashboard');
-        }
-    })->name('racks.create');
-
-    Route::get('/racks/store', function () {
-        if (Auth::user()->getRoleNames()->first() === 'admin') {
-            return (new RakController())->store();
-        } else {
-            return redirect()->route('user.dashboard');
-        }
-    })->name('racks.store');
-
-    Route::get('/racks/edit/{id}', function ($id) {
-        if (Auth::user()->getRoleNames()->first() === 'admin') {
-            return (new App\Http\Controllers\RakController())->edit($id);
-        } else {
-            return redirect()->route('user.dashboard');
-        }
-    })->name('racks.edit');
-
-    Route::get('/racks/update/{id}', function () {
-        if (Auth::user()->getRoleNames()->first() === 'admin') {
-            return (new RakController())->update();
-        } else {
-            return redirect()->route('user.dashboard');
-        }
-    })->name('racks.update');
-
-    Route::get('/racks/destroy/{id}', function () {
-        if (Auth::user()->getRoleNames()->first() === 'admin') {
-            return (new RakController())->destroy();
-        } else {
-            return redirect()->route('user.dashboard');
-        }
-    })->name('racks.destroy');
+        // Added routes
+        Route::get('/peminjaman/{id}/return', [PeminjamanController::class, 'returnBook'])->name('peminjaman.return');
+        Route::get('/peminjaman/denda/{id}', [PeminjamanController::class, 'showDenda'])->name('peminjaman.show-denda');
+        Route::post('/denda/{id}/mark-as-paid', [DendaController::class, 'markAsPaid'])->name('denda.mark-as-paid');
+      });
 
 
-    // Settings routes
-    Route::get('/settings', function () {
-        if (Auth::user()->getRoleNames()->first() === 'admin') {
-            return (new SettingController())->index();
-        } else {
-            return redirect()->route('user.dashboard');
-        }
-    })->name('settings.index');
+    // Petugas routes
+    Route::middleware(['roleid:1,2'])->group(function () {
+        Route::resource('peminjaman', PeminjamanController::class);
+        Route::get('/peminjaman/{id}/delete', [PeminjamanController::class, 'destroy'])->name('peminjaman.destroy');
+        Route::delete('peminjaman/{id}', [PeminjamanController::class, 'destroy'])->name('peminjaman.destroy');
+        Route::post('/peminjaman/pay-fine/{denda}', [PeminjamanController::class, 'payFine'])->name('peminjaman.pay-fine');
+        Route::post('/peminjaman/update-fine-status/{denda}', [PeminjamanController::class, 'updateFineStatus'])
+        ->name('peminjaman.update-fine-status');
 
-    Route::post('/settings/update-cart-limit', function () {
-        if (Auth::user()->getRoleNames()->first() === 'admin') {
-            return (new SettingController())->updateCartLimit();
-        } else {
-            return redirect()->route('user.dashboard');
-        }
-    })->name('settings.update-cart-limit');
-});
+    });
 
-// Petugas (non-admin but authorized users) routes
-Route::middleware(['auth'])->group(function () {
-    Route::get('/peminjaman', function () {
-        if (Auth::user()->getRoleNames()->first() === 'petugas') {
-            return (new PeminjamanController())->index();
-        } else {
-            return redirect()->route('user.dashboard');
-        }
-    })->name('peminjaman.index');
 });

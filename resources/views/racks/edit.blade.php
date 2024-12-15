@@ -14,12 +14,21 @@
                         @csrf
                         @method('PUT')
                         <div class="mb-4">
-                            <label for="nama" class="block text-gray-700 text-sm font-bold mb-2">Name:</label>
-                            <input type="text" name="nama" id="nama" value="{{ $rack->nama }}" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                            <label for="rak" class="block text-gray-700 text-sm font-bold mb-2">Name:</label>
+                            <input type="text" name="rak" id="rak" value="{{ $rack->rak }}" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
                         </div>
                         <div class="mb-4">
                 <label for="baris" class="block text-gray-700 text-sm font-bold mb-2">Row:</label>
                             <input type="number" name="baris" id="baris" value="{{ $rack->baris }}" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required min="1">
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="kategori_id" class="block text-gray-700 text-sm font-bold mb-2">Category</label>
+                            <select name="kategori_id" id="kategori_id" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                                @foreach($categories as $category)
+                                    <option value="{{ $category->id }}" {{ $rack->kategori_id == $category->id ? 'selected' : '' }}>{{ $category->nama }}</option>
+                                @endforeach
+                            </select>
                         </div>
                         <div class="mb-4">
                             <label for="slug" class="block text-gray-700 text-sm font-bold mb-2">Slug:</label>
