@@ -24,6 +24,7 @@ class DatabaseSeeder extends Seeder
             BukuSeeder::class,
             TransaksiSeeder::class,
             PeminjamanSeeder::class,
+            DendaSeeder::class,
         ]);;
     }
 }
