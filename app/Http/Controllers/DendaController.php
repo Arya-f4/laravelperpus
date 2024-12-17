@@ -38,7 +38,7 @@ class DendaController extends Controller
                         'is_paid' => 0
                     ]
                 );
-             
+
 
 
             }
@@ -46,9 +46,7 @@ class DendaController extends Controller
 
         // Fetch all unpaid fines
         $dendas = Denda::with('peminjaman.user')
-                       ->with('peminjaman.detailPeminjaman.buku')
-                       ->where('is_paid', false)
-                       ->get();
+                       ->with('peminjaman.detailPeminjaman.buku')->get();
 
         return view('denda.index', compact('dendas'));
     }

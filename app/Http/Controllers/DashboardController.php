@@ -50,6 +50,9 @@ class DashboardController extends Controller
         $activeBorrowings = Peminjaman::where('status', 'dipinjam')->count();
         $totalBorrowings = Peminjaman::count();
         $totalFines = Denda::sum('total_denda');
+        $unpaidFines = Denda::where('is_paid', 0)->sum('total_denda');
+        $paidFines = Denda::where('is_paid', 1)->sum('total_denda');
+
         $aktivitas_user = UserActivityLog::paginate(5);
         $penerbit = Penerbit::all();
         $bukuData = Buku::selectRaw('penerbit_id, count(*) as jumlah')
@@ -76,7 +79,7 @@ class DashboardController extends Controller
             ->get();
         $pendingRequests = Peminjaman::where('status', 'menunggu konfirmasi')->count();
         // return $active_users;
-        return view('dashboard.admin', compact('aktivitas_user', 'labels', 'data','totalBooks', 'totalUsers', 'activeBorrowings', 'totalBorrowings', 'totalFines', 'pendingRequests', 'recentBorrowings', 'popularBooks'));
+        return view('dashboard.admin', compact('aktivitas_user', 'labels', 'data', 'totalBooks', 'totalUsers', 'activeBorrowings', 'totalBorrowings', 'totalFines', 'unpaidFines', 'paidFines', 'pendingRequests', 'recentBorrowings', 'popularBooks'));
     }
 
     private function petugasDashboard()
