@@ -40,20 +40,14 @@
                             @endforeach
                         </tbody>
                     </table> --}}
+                <div
+                    class="overflow-hidden border border-gray-200 dark:border-gray-700 md:rounded-lg">
                     <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                         <thead class="bg-gray-50 dark:bg-gray-800">
                             <tr>
                                 <th scope="col"
                                     class="py-3.5 px-4 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                                    <div class="flex items-center gap-x-3">
-                                        <input type="checkbox"
-                                            class="text-blue-500 border-gray-300 rounded dark:bg-gray-900 dark:ring-offset-gray-900 dark:border-gray-700">
-                                        <button class="flex items-center gap-x-2">
-                                            <span>ID</span>
-
-
-                                        </button>
-                                    </div>
+                                    ID
                                 </th>
 
                                 <th scope="col"
@@ -74,9 +68,6 @@
                                     <td
                                         class="px-4 py-4 text-sm font-medium text-gray-700 dark:text-gray-200 whitespace-nowrap">
                                         <div class="inline-flex items-center gap-x-3">
-                                            <input type="checkbox"
-                                                class="text-blue-500 border-gray-300 rounded dark:bg-gray-900 dark:ring-offset-gray-900 dark:border-gray-700">
-
                                             <span> {{ $publisher->id }}</span>
                                         </div>
                                     </td>
@@ -99,6 +90,7 @@
 
                         </tbody>
                     </table>
+                </div>
                     <div class="mt-4">
                         {{ $publishers->links() }}
                     </div>

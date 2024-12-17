@@ -4,7 +4,7 @@
             <div class="bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 bg-gray-800">
                     <div class="flex justify-between items-center mb-6">
-                        <h2 class="text-2xl font-semibold text-gray-800">Categories Management</h2>
+                        <h2 class="text-lg font-semibold text-white">Categories Management</h2>
                         @if (Auth::user()->role_id == 1)
                             <a href="{{ route('categories.create') }}"
                                 class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
@@ -24,15 +24,7 @@
                                                 <tr>
                                                     <th scope="col"
                                                         class="py-3.5 px-4 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                                                        <div class="flex items-center gap-x-3">
-                                                            <input type="checkbox"
-                                                                class="text-blue-500 border-gray-300 rounded dark:bg-gray-900 dark:ring-offset-gray-900 dark:border-gray-700">
-                                                            <button class="flex items-center gap-x-2">
-                                                                <span>ID</span>
-
-
-                                                            </button>
-                                                        </div>
+                                                        ID
                                                     </th>
 
                                                     <th scope="col"
@@ -58,9 +50,6 @@
                                                         <td
                                                             class="px-4 py-4 text-sm font-medium text-gray-700 dark:text-gray-200 whitespace-nowrap">
                                                             <div class="inline-flex items-center gap-x-3">
-                                                                <input type="checkbox"
-                                                                    class="text-blue-500 border-gray-300 rounded dark:bg-gray-900 dark:ring-offset-gray-900 dark:border-gray-700">
-
                                                                 <span> {{ $category->id }}</span>
                                                             </div>
                                                         </td>
