@@ -1,6 +1,59 @@
 @extends('layout.user')
 @section('content')
     <div class="content">
+        <!-- Add Search Form -->
+        <div class="mb-8 bg-gray-800 p-6 rounded-lg shadow-md">
+            <form action="{{ route('books.index') }}" method="GET" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <!-- Search Input -->
+                    <div>
+                        <label for="search" class="block text-sm font-medium text-white mb-1">Search</label>
+                        <input
+                            type="text"
+                            name="search"
+                            id="search"
+                            placeholder="Search by title or author..."
+                            value="{{ request('search') }}"
+                            class="w-full text-black rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
+                        >
+                    </div>
+
+                    <!-- Category Filter -->
+                    <div>
+                        <label for="kategori" class="block text-sm font-medium text-white mb-1">Category</label>
+                        <select name="kategori" id="kategori" class="text-black w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500">
+                            <option value="" class="text-black">All Categories</option>
+                            @foreach($categories as $category)
+
+                                <option class="text-black" value="{{ $category->id }}" {{ request('kategori') == $category->id ? 'selected' : '' }}>
+                                    {{ $category->nama }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- Publisher Filter -->
+                    <div>
+                        <label for="penerbit" class="block text-sm font-medium text-white mb-1">Publisher</label>
+                        <select name="penerbit" id="penerbit" class="text-black w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500">
+                            <option class="text-black" value="">All Publishers</option>
+                            @foreach($publishers as $publisher)
+                                <option class="text-black" value="{{ $publisher->id }}" {{ request('penerbit') == $publisher->id ? 'selected' : '' }}>
+                                    {{ $publisher->nama }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- Search Button -->
+                    <div class="flex items-end">
+                        <button type="submit" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-md transition duration-150 ease-in-out">
+                            Search
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
 
         <div class="page-title flex flex-row justify-between mb-10">
             <h1 class="text-xl">All Books</h1>
@@ -11,9 +64,10 @@
                 </a>
             @endif
         </div>
+
+        <!-- Rest of your existing code remains the same -->
         <div class="page-content">
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-
                 @foreach ($books as $book)
                     <a href="{{ route('books.show', $book->slug) }}" class="group relative block overflow-hidden">
                         <button
@@ -36,20 +90,13 @@
                         @endif
 
                         <div class="relative bg-gray-800 p-6">
-                            <p class="text-gray-700">
-
-                                {{-- <span class="text-gray-400 line-through">$80</span> --}}
-                            </p>
-
                             <h3 class="mt-1.5 text-lg font-medium text-white">{{ $book->judul }}</h3>
-
                             <p class="mt-1.5 line-clamp-3 text-gray-400">
                                 {{ $book->penulis }}
                             </p>
                             <p class="mt-1.5 line-clamp-3 text-gray-400">
                                 {{ $book->kategori->nama }}
                             </p>
-
                             <form action="{{ route('books.show', $book->slug) }}" class="mt-4 flex gap-4">
                                 <button
                                     class="rounded w-full bg-purple-800 px-4 py-3 text-sm font-medium text-white transition hover:scale-105">
@@ -58,40 +105,9 @@
                             </form>
                         </div>
                     </a>
-                    {{-- <div
-                    class="bg-white rounded-lg shadow-lg overflow-hidden transform hover:scale-105 transition-all duration-300">
-                        <img src="https://placehold.co/400" alt="{{ $book->judul }}"
-                            class="w-full h-64 object-cover hover:opacity-80 transition-opacity duration-300">
-                        <div class="book-card px-6">
-                            <div class="book-header mb-5 mt-2">
-                                <h3 class="font-semibold text-2xl text-gray-800 m-0 p-0">{{ $book->judul }}</h3>
-                                <p class="text-gray-600 text-sm m-0 p-0">By <span
-                                        class="font-medium text-blue-600">{{ $book->penulis }}</span></p>
-                                <p class="text-gray-500 text-sm m-0 p-0">{{ $book->kategori->nama }}</p>
-                            </div>
-                            <a href="{{ route('books.show', $book->slug) }}"
-                                class="inline-block w-full text-center my-3 bg-blue-600 hover:bg-blue-800 text-white font-semibold py-1 px-5 rounded-lg transition duration-200 ease-in-out transform hover:scale-105">
-                                View Details
-                            </a>
-                            @if (auth()->user() && in_array(auth()->user()->role, ['admin', 'petugas']))
-                                <a href="{{ route('books.edit', $book) }}"
-                                    class="inline-block bg-yellow-500 hover:bg-yellow-700 text-white font-semibold py-2 px-5 rounded-lg ml-4 transition duration-200 ease-in-out transform hover:scale-105">
-                                    Edit
-                                </a>
-                                <form action="{{ route('books.destroy', $book) }}" method="POST" class="inline-block ml-4">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit"
-                                        class="bg-red-600 hover:bg-red-800 text-white font-semibold py-2 px-5 rounded-lg transition duration-200 ease-in-out transform hover:scale-105"
-                                        onclick="return confirm('Are you sure you want to delete this book?')">
-                                        Delete
-                                    </button>
-                                </form>
-                            @endif
-                        </div>
-                    </div> --}}
                 @endforeach
             </div>
-
         </div>
-    @endsection
+    </div>
+@endsection
+

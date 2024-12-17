@@ -22,6 +22,17 @@
 
                     <div class="book-detail mt-5">
 
+                        <div class="flex flex-col w-full">
+                            <span class="font-semibold mb-1">Description:</span>
+                            <p class="text-white break-words">{{ $book->deskripsi }}</p>
+                        </div>
+
+                        <div class="mt-2 flex justify-between w-full">
+                            <span class="font-semibold">ISBN:</span>
+                            <p class="text-white
+                                mb-2">{{ $book->isbn }}</p>
+                        </div>
+
                         <div class="flex justify-between w-full">
                             <span class="font-semibold">Publisher:</span>
                             <p class="text-white mb-2 capitalize ">
@@ -44,14 +55,14 @@
                         </div>
                     </div>
 
-                    
+
                         @auth
                             @if (Auth::user()->role_id == 3)
                                 @if ($book->stok > 0)
                                     <form action="{{ route('books.request-borrow', $book->id) }}" method="POST">
                                         @csrf
                                         <button type="submit"
-                                            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                                            class="bg-blue-500 mb-4 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                                             Borrow this Book
                                         </button>
                                     </form>
@@ -85,22 +96,22 @@
                             @endif
                         @else
                             <a href="{{ route('login') }}"
-                                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                                class="bg-blue-500 mb-4 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                                 Login to Borrow
                             </a>
                         @endauth
                         @auth
                             @if (auth()->user()->role === 'peminjam')
-                                <form action="{{ route('books.add-to-cart', $book) }}" method="POST">
+                                <form class="" action="{{ route('books.add-to-cart', $book) }}" method="POST">
                                     @csrf
                                     <button type="submit"
-                                        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                                        class="bg-blue-500 mt-4 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                                         Add to Cart
                                     </button>
                                 </form>
                             @endif
                         @endauth
-                    
+
                 </div>
             </div>
         </div>

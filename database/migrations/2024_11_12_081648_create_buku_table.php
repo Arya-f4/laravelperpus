@@ -16,6 +16,8 @@ return new class extends Migration
             $table->string('judul');
             $table->string('slug');
             $table->string('sampul');
+            $table->text('deskripsi');
+            $table->string('isbn');
             $table->string('penulis');
             $table->foreignId('penerbit_id');
             $table->foreignId('kategori_id');

@@ -12,11 +12,37 @@ use Illuminate\Support\Str;
 use Yajra\DataTables\Facades\DataTables;
 class BukuController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $books = Buku::with(['kategori', 'penerbit', 'rak'])->paginate(10);
+        $query = Buku::with(['kategori', 'penerbit', 'rak']);
 
-        return view('books.index', compact('books'));
+        // Search functionality
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('judul', 'like', "%{$search}%")
+                  ->orWhere('penulis', 'like', "%{$search}%");
+            });
+        }
+
+        // Category filter
+        if ($request->filled('kategori')) {
+            $query->where('kategori_id', $request->kategori);
+        }
+
+        // Publisher filter
+        if ($request->filled('penerbit')) {
+            $query->where('penerbit_id', $request->penerbit);
+        }
+
+        $books = $query->paginate(12);
+        $categories = Kategori::all();
+        $publishers = Penerbit::all();
+
+        // Use 'home' view for the root route, 'books.index' for other cases
+        $view = $request->routeIs('home') ? 'home' : 'books.index';
+
+        return view($view, compact('books', 'categories', 'publishers'));
     }
     public function data()
     {
@@ -68,6 +94,8 @@ class BukuController extends Controller
             'kategori_id' => 'required|exists:kategori,id',
             'rak_id' => 'required|exists:rak,id',
             'stok' => 'required|integer|min:0',
+            'deskripsi' => 'required|string',
+            'isbn' => 'required|string',
             'sampul' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'slug' => Str::slug($request->input('judul')),
         ]);
@@ -101,6 +129,8 @@ class BukuController extends Controller
             'penulis' => 'required|string|max:255',
             'penerbit_id' => 'required|exists:penerbit,id',
             'kategori_id' => 'required|exists:kategori,id',
+            'deskripsi' => 'required|string',
+            'isbn' => 'required|string',
             'rak_id' => 'required|exists:rak,id',
             'stok' => 'required|integer|min:0',
             'sampul' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',

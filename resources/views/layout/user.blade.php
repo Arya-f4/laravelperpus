@@ -12,13 +12,13 @@
 </head>
 
 <body class="bg-gray-700 text-white">
-
     @include('layout.topbar')
 
     <div class="container min-w-screen mx-12 pt-12">
         @yield('content')
     </div>
 
+    @include('layout.sidebar')
 </body>
 
 </html>

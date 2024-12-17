@@ -16,10 +16,8 @@ use Illuminate\Support\Facades\Auth;
 
 
 // Public routes
-Route::get('/', function () {
-    $books = Buku::with(['kategori', 'penerbit', 'rak'])->paginate(10);
-    return view('home', compact('books'));
-})->name('home');
+Route::get('/', [BukuController::class, 'index'])->name('home');
+
 
 Route::get('/books', [BukuController::class, 'index'])->name('books.index');
 Route::get('/books/{slug}', [BukuController::class, 'show'])->name('books.show');
