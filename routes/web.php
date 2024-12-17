@@ -53,7 +53,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/my-borrowings', [PeminjamanController::class, 'userIndex'])->name('peminjaman.user-index');
 
     // Books for authenticated users
-    Route::post('/books/{buku}/borrow', [PeminjamanController::class, 'requestBorrow'])->name('books.request-borrow');
 
     Route::get('/books/data', [BukuController::class, 'data'])->name('books.data');
     Route::post('/books/{buku}/add-to-cart', [PeminjamanController::class, 'addToCart'])->name('books.add-to-cart');
@@ -72,7 +71,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/', [PeminjamanController::class, 'index'])->name('peminjaman.index');
         Route::get('/my-borrowings', [PeminjamanController::class, 'userIndex'])->name('peminjaman.user-index');
         Route::get('/{id}', [PeminjamanController::class, 'show'])->name('peminjaman.show');
-        Route::get('/{id}/approve', [PeminjamanController::class, 'approve'])
+        Route::put('/{id}/approve', [PeminjamanController::class, 'approve'])
         ->name('peminjaman.approve')
         ->middleware('roleid:1,2');
         Route::delete('/{id}/cancel', [PeminjamanController::class, 'cancel'])->name('peminjaman.cancel');
@@ -81,17 +80,18 @@ Route::middleware(['auth'])->group(function () {
             ->middleware('role:admin,petugas');
        });
 
-    // Cart Routes
-    Route::prefix('cart')->group(function () {
-        Route::post('/add/{buku}', [PeminjamanController::class, 'addToCart'])->name('books.add-to-cart');
+       Route::prefix('cart')->group(function () {
+        Route::post('/add/{bookId}', [PeminjamanController::class, 'addToCart'])->name('books.add-to-cart');
         Route::get('/', [PeminjamanController::class, 'viewCart'])->name('peminjaman.cart');
-        Route::delete('/remove/{id}', [PeminjamanController::class, 'removeFromCart'])->name('peminjaman.remove-from-cart');
+        Route::delete('/remove/{bookId}', [PeminjamanController::class, 'removeFromCart'])->name('peminjaman.remove-from-cart');
         Route::post('/checkout', [PeminjamanController::class, 'checkout'])->name('peminjaman.checkout');
     });
 
+    // Borrowing Route
+    Route::post('/books/borrow', [PeminjamanController::class, 'requestBorrow'])->name('books.request-borrow');
+
     // Admin and Petugas routes
     Route::middleware(['auth','roleid:1'])->prefix('admin')->group(function () {
-        // Dashboard
         Route::get('/dashboard', [DashboardController::class, 'adminDashboard'])->name('admin.dashboard');
 
         // Resources
@@ -116,17 +116,19 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/peminjaman/denda/{id}', [PeminjamanController::class, 'showDenda'])->name('peminjaman.show-denda');
         Route::post('/denda/{id}/mark-as-paid', [DendaController::class, 'markAsPaid'])->name('denda.mark-as-paid');
       });
+        // Dashboard
 
 
-    // Petugas routes
-    Route::middleware(['roleid:1,2'])->group(function () {
-        Route::resource('peminjaman', PeminjamanController::class);
-        Route::get('/peminjaman/{id}/delete', [PeminjamanController::class, 'destroy'])->name('peminjaman.destroy');
-        Route::delete('peminjaman/{id}', [PeminjamanController::class, 'destroy'])->name('peminjaman.destroy');
-        Route::post('/peminjaman/pay-fine/{denda}', [PeminjamanController::class, 'payFine'])->name('peminjaman.pay-fine');
-        Route::post('/peminjaman/update-fine-status/{denda}', [PeminjamanController::class, 'updateFineStatus'])
-        ->name('peminjaman.update-fine-status');
+        // Petugas routes
+        Route::middleware(['roleid:1,2'])->group(function () {
+            Route::resource('peminjaman', PeminjamanController::class);
+            Route::get('/peminjaman/{id}/delete', [PeminjamanController::class, 'destroy'])->name('peminjaman.destroy');
+            Route::delete('peminjaman/{id}', [PeminjamanController::class, 'destroy'])->name('peminjaman.destroy');
+            Route::post('/peminjaman/pay-fine/{denda}', [PeminjamanController::class, 'payFine'])->name('peminjaman.pay-fine');
+            Route::post('/peminjaman/update-fine-status/{denda}', [PeminjamanController::class, 'updateFineStatus'])
+            ->name('peminjaman.update-fine-status');
 
-    });
+        });
+
 
 });

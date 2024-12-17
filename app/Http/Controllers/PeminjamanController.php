@@ -34,8 +34,7 @@ class PeminjamanController extends Controller
             ->get();
         return view('peminjaman.user-index', compact('borrowings'));
     }
-
-    public function addToCart(Buku $buku)
+    public function addToCart(Request $request, $bookId)
     {
         $user = Auth::user();
         $activeBorrowings = Peminjaman::where('peminjam_id', $user->id)
@@ -43,17 +42,15 @@ class PeminjamanController extends Controller
             ->count();
 
         if ($activeBorrowings >= 2) {
-            return redirect()->back()->with('error', 'You can only borrow up to 2 books at a time.');
+            return redirect()->back()->with('error', 'You have already borrowed two books!');
         }
 
         $cart = session()->get('cart', []);
-        $cart[$buku->id] = $buku->id;
+        $cart[$bookId] = $bookId;
         session()->put('cart', $cart);
 
         return redirect()->back()->with('success', 'Book added to cart successfully.');
     }
-
-
 
     public function viewCart()
     {
@@ -61,43 +58,67 @@ class PeminjamanController extends Controller
         return view('peminjaman.cart', compact('cartItems'));
     }
 
-    public function removeFromCart($buku)
+    public function removeFromCart($bookId)
     {
         $cart = session()->get('cart', []);
-        if (isset($cart[$buku])) {
-            unset($cart[$buku]);
+        if (isset($cart[$bookId])) {
+            unset($cart[$bookId]);
             session()->put('cart', $cart);
         }
         return redirect()->back()->with('success', 'Book removed from cart successfully.');
     }
 
-    public function checkout()
+    public function checkout(Request $request)
     {
-        $cartItems = Buku::whereIn('id', session()->get('cart', []))->get();
+        $user = Auth::user();
+        $selectedBooks = $request->input('selected_books', []);
 
-        // Create a new peminjaman record
+        if (empty($selectedBooks)) {
+            return redirect()->back()->with('error', 'Please select at least one book to borrow.');
+        }
+
+        $cartItems = Buku::whereIn('id', $selectedBooks)->get();
+
+        $activeBorrowings = Peminjaman::where('peminjam_id', $user->id)
+            ->whereIn('status', [0, 1])
+            ->count();
+
+        if ($activeBorrowings + $cartItems->count() > 2) {
+            return redirect()->back()->with('error', 'You can only borrow up to 2 books at a time.');
+        }
+
+        $kodePinjam = 'PJM-' . Str::random(8);
+        $tanggalPinjam = now();
+        $tanggalKembali = now()->addDays(14);
+
         $peminjaman = Peminjaman::create([
-            'user_id' => Auth::id(),
-            'kode_pinjam' => 'AUTO_GENERATE_CODE',  // Add your code logic if needed
-            'tanggal_pinjam' => now(),
-            'tanggal_kembali' => now()->addDays(14),
-            'status' => 1,
+            'peminjam_id' => $user->id,
+            'kode_pinjam' => $kodePinjam,
+            'tanggal_pinjam' => $tanggalPinjam,
+            'tanggal_kembali' => $tanggalKembali,
+            'status' => 0,
         ]);
 
-        // Insert details into detail_peminjaman table for each cart item
         foreach ($cartItems as $item) {
             DB::table('detail_peminjaman')->insert([
-                'peminjaman_id' => Auth::id(),  // Reference the newly created peminjaman ID
-                'buku_id' => $item->id,  // Reference the book ID
+                'peminjaman_id' => $peminjaman->id,
+                'buku_id' => $item->id,
+                'created_at' => now(),
+                'updated_at' => now(),
             ]);
         }
 
-        // Clear the cart session
-        session()->forget('cart');
+        // Remove borrowed books from the cart
+        $cart = session()->get('cart', []);
+        foreach ($selectedBooks as $bookId) {
+            unset($cart[$bookId]);
+        }
+        session()->put('cart', $cart);
 
-        // Redirect to the peminjaman page with a success message
         return redirect()->route('peminjaman.user-index')->with('success', 'Books borrowed successfully.');
     }
+
+
 
 
 
@@ -123,12 +144,12 @@ class PeminjamanController extends Controller
     {
         $peminjaman = Peminjaman::findOrFail($id);
 
-        if ($peminjaman->peminjam_id != auth()->id() || $peminjaman->status != 0) {
-            return redirect()->back()->with('error', 'You cannot cancel this borrowing request.');
+        if ($peminjaman->status != 0) {
+            return redirect()->back()->with('error', 'This request cannot be cancelled.');
         }
 
-        $peminjaman->delete();
-        return redirect()->route('peminjaman.user-index')->with('success', 'Borrowing request cancelled successfully.');
+        $peminjaman->update(['status' => 2]); // Set status to rejected instead of deleting
+        return redirect()->route('peminjaman.index')->with('success', 'Borrowing request rejected successfully.');
     }
     public function show($id)
     {
@@ -143,16 +164,22 @@ class PeminjamanController extends Controller
     }
 
 
-
     public function requestBorrow(Request $request)
     {
         $user = Auth::user();
+
         $activeBorrowings = Peminjaman::where('peminjam_id', $user->id)
             ->whereIn('status', [0, 1])
             ->count();
 
-        if ($activeBorrowings  > 2) {
-            return redirect()->back()->with('error', 'You can only borrow up to 2 books at a time.');
+        $bookId = $request->input('book_id');
+
+        if ($activeBorrowings >= 2) {
+            return redirect()->back()->with('error', 'You have already borrowed two books. Please return a book before borrowing another.');
+        }
+
+        if (!$bookId) {
+            return redirect()->back()->with('error', 'No book selected for borrowing.');
         }
 
         $kodePinjam = 'PJM-' . Str::random(8);
@@ -167,19 +194,17 @@ class PeminjamanController extends Controller
             'status' => 0,
         ]);
 
-        foreach ($request->cart_ids as $bukuId) {
-            DB::table('detail_peminjaman')->insert([
-                'peminjaman_id' => $peminjaman->id,
-                'buku_id' => $bukuId,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-        }
-
-        session()->forget('cart');
+        DB::table('detail_peminjaman')->insert([
+            'peminjaman_id' => $peminjaman->id,
+            'buku_id' => $bookId,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
 
         return redirect()->route('peminjaman.user-index')->with('success', 'Borrowing request submitted successfully.');
     }
+
+
 
     public function cancelRequest($id)
     {
@@ -211,42 +236,41 @@ class PeminjamanController extends Controller
 
         return redirect()->route('peminjaman.index')->with('success', 'Peminjaman buku ditolak.');
     }
-    public function returnBook($id)
-    {
-        $peminjaman = Peminjaman::findOrFail($id);
 
-        // Check if the book is already returned
-        if ($peminjaman->status == 3) {
-            return redirect()->back()->with('error', 'This book has already been returned.');
-        }
+public function returnBook($id)
+{
+    $peminjaman = Peminjaman::findOrFail($id);
 
-        // Calculate days late
-        $dueDate = Carbon::parse($peminjaman->tanggal_kembali);
-        $today = Carbon::now();
-        $daysLate = max(0, $today->diffInDays($dueDate, false));
-
-        // Update peminjaman
-        $peminjaman->update([
-            'status' => 3, // Returned
-            'tanggal_pengembalian' => $today,
-            'petugas_kembali' => auth()->id(), // Track returning staff
-        ]);
-
-        // Create fine if returned late
-        if ($daysLate > 0) {
-            Denda::create([
-                'peminjaman_id' => $peminjaman->id,
-                'jumlah_hari' => $daysLate,
-                'total_denda' => $daysLate * 1000, // Rp. 1000 per day
-                'is_paid' => 0, // 0 for false (unpaid)
-            ]);
-        }
-
-        return redirect()->route('peminjaman.index')
-            ->with('success', 'Book has been returned successfully.' .
-                ($daysLate > 0 ? ' Fine has been created for ' . $daysLate . ' days late.' : ''));
+    if ($peminjaman->status != 1) {
+        return redirect()->back()->with('error', 'This book cannot be returned.');
     }
 
+    // Calculate days late
+    $dueDate = Carbon::parse($peminjaman->tanggal_kembali);
+    $today = Carbon::now();
+    $daysLate = max(0, $today->diffInDays($dueDate, false));
+
+    // Update peminjaman
+    $peminjaman->update([
+        'status' => 3, // Returned
+        'tanggal_pengembalian' => $today,
+        'petugas_kembali' => auth()->id(), // Track returning staff
+    ]);
+
+    // Create fine if returned late
+    if ($daysLate > 0) {
+        Denda::create([
+            'peminjaman_id' => $peminjaman->id,
+            'jumlah_hari' => $daysLate,
+            'total_denda' => $daysLate * 1000, // Rp. 1000 per day
+            'is_paid' => 0, // 0 for false (unpaid)
+        ]);
+    }
+
+    return redirect()->route('peminjaman.index')
+        ->with('success', 'Book has been returned successfully.' .
+            ($daysLate > 0 ? ' Fine has been created for ' . $daysLate . ' days late.' : ''));
+}
 
 
 
@@ -270,8 +294,7 @@ class PeminjamanController extends Controller
         }
 
         $peminjamantable = Peminjaman::findOrFail($denda->peminjaman_id);
-        $user = User::findOrFail($peminjamantable->peminjam_id); // Get user based on peminjam_id
-
+        $user = User::findOrFail($peminjamantable->peminjam_id);
 
         // Load Midtrans configuration
         \Midtrans\Config::$serverKey = config('services.midtrans.server_key');
@@ -279,16 +302,19 @@ class PeminjamanController extends Controller
         \Midtrans\Config::$isSanitized = config('services.midtrans.is_sanitized');
         \Midtrans\Config::$is3ds = config('services.midtrans.is_3ds');
 
+        // Round the total_denda to the nearest whole number
+        $roundedAmount = round($denda->total_denda);
+
         // Create a transaction payload
         $transactionDetails = [
-            'order_id' => 'FINE-' . uniqid(), // Unique order ID
-            'gross_amount' => $denda->total_denda, // Fine amount
+            'order_id' => 'FINE-' . uniqid(),
+            'gross_amount' => $roundedAmount,
         ];
 
         $itemDetails = [
             [
                 'id' => 'FINE-' . $denda->id,
-                'price' => $denda->total_denda,
+                'price' => $roundedAmount,
                 'quantity' => 1,
                 'name' => 'Library Fine Payment',
             ],
@@ -311,9 +337,12 @@ class PeminjamanController extends Controller
 
             return view('payment.pay', compact('snapToken', 'denda'));
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Failed to process payment: ' . $e->getMessage());
+            // Log the error for debugging
+            \Log::error('Midtrans Error: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Failed to process payment. Please try again later.');
         }
     }
+
     public function updateFineStatus(Request $request, Denda $denda)
 {
     // Check if the fine is already paid

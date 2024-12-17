@@ -5,7 +5,7 @@
         </h2>
     </x-slot>
 
-    <div class="py-12">
+    <div class="py-12 text-black">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 bg-white border-b border-gray-200">
@@ -25,10 +25,10 @@
                             <tbody class="bg-white divide-y divide-gray-200">
                                 @foreach ($borrowings as $borrowing)
                                     <tr>
-                                        <td class="px-6 py-4 whitespace-nowrap">
+                                        <td class="px-6 py-4 whitespace-nowrap overflow-hidden w-100">
                                             <ul>
                                                 @foreach ($borrowing->bukus as $buku)
-                                                    <li>{{ $buku->judul }}</li>
+                                                    <li class="w-20">{{ $buku->judul }}</li>
                                                 @endforeach
                                             </ul>
                                         </td>

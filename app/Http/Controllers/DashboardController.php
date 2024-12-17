@@ -17,21 +17,30 @@ class DashboardController extends Controller
     {
         $user = auth()->user();
         $activeBorrowings = Peminjaman::where('peminjam_id', $user->id)
-            ->where('status', 'dipinjam')
-            ->with('buku')
+            ->whereIn('status', [0, 1]) // 0 for pending, 1 for active
+            ->with(['detailPeminjaman.buku'])
             ->get();
+
         $pendingRequests = Peminjaman::where('peminjam_id', $user->id)
-            ->where('status', 'menunggu konfirmasi')
-            ->with('buku')
+            ->where('status', 0)
+            ->with(['detailPeminjaman.buku'])
             ->get();
+
         $pendingDendas = Denda::whereHas('peminjaman', function ($query) use ($user) {
             $query->where('peminjam_id', $user->id);
         })
             ->where('is_paid', false)
             ->get();
 
-        return view('dashboard.user', compact('activeBorrowings', 'pendingRequests', 'pendingDendas'));
+        $unpaidFines = Denda::whereHas('peminjaman', function ($query) use ($user) {
+            $query->where('peminjam_id', $user->id);
+        })
+            ->where('is_paid', false)
+            ->get();
+
+        return view('dashboard.user', compact('activeBorrowings', 'pendingRequests', 'pendingDendas', 'unpaidFines'));
     }
+
 
     public function adminDashboard()
     {
@@ -44,14 +53,14 @@ class DashboardController extends Controller
         $aktivitas_user = UserActivityLog::paginate(5);
         $penerbit = Penerbit::all();
         $bukuData = Buku::selectRaw('penerbit_id, count(*) as jumlah')
-                ->groupBy('penerbit_id')
-                ->get();
-        
-        // buku per penerbit
+                        ->groupBy('penerbit_id')
+                        ->get();
+
+        // Prepare data for the chart
         $labels = $bukuData->map(function ($item) {
             return Penerbit::find($item->penerbit_id)->nama;
         });
-        
+
         $data = $bukuData->map(function ($item) {
             return $item->jumlah;
         });

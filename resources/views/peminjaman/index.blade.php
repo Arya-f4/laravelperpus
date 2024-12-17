@@ -75,8 +75,10 @@
                                     </th>
                                 </tr>
                             </thead>
+
                             <tbody class="bg-white divide-y divide-gray-200 dark:divide-gray-700 dark:bg-gray-900">
                                 @foreach ($peminjaman as $pinjam)
+
                                     <tr>
                                         <td class="px-4 py-4 text-sm text-gray-700 dark:text-gray-200 whitespace-nowrap">
                                             <div class="inline-flex items-center gap-x-3">
@@ -88,8 +90,8 @@
                                                 <span>{{ $pinjam->kode_pinjam }}</span>
                                             </div>
                                         </td>
-                                        <td class="px-4 py-4 text-sm text-gray-700 dark:text-gray-200 whitespace-nowrap">
-                                            <div class="inline-flex items-center gap-x-3">
+                                        <td class="px-4 py-4 text-sm text-gray-700 dark:text-gray-200 w-20 overflow-hidden whitespace-nowrap">
+                                            <div class="inline-flex w-20 items-center gap-x-3">
                                                 @foreach ($pinjam->detailPeminjaman as $detail)
                                                 {{ $detail->buku->judul ?? 'N/A' }}<br>
                                             @endforeach
@@ -138,41 +140,55 @@
                                                 </span>
                                             @endif
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm">
-                                            @if (Auth::user()->role_id === 1 || Auth::user()->role_id == 2)
-                                                @if ($pinjam->status == 1)
-                                                    <a href="{{ route('peminjaman.return', $pinjam->id) }}"
-                                                        class="text-blue-600 hover:text-blue-900">Return Book</a>
-                                                @endif
-                                            @endif
-                                            @if ($pinjam->status == 2 || $pinjam->status == 3)
-                                                <form action="{{ route('peminjaman.destroy', $pinjam->id) }}"
-                                                    method="POST" class="inline ml-2">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="text-red-600 hover:text-red-900"
-                                                        onclick="return confirm('Are you sure you want to delete this record?')">Delete</button>
-                                                </form>
-                                            @endif
+                                      <!-- ... (previous code remains unchanged) -->
 
-                                            @php
-                                                $bayar = \App\Models\Denda::where(
-                                                    'peminjaman_id',
-                                                    $pinjam->id,
-                                                )->first();
-                                            @endphp
+<td class="px-6 py-4 whitespace-nowrap text-sm">
 
-                                            @if ($bayar && $bayar->is_paid == 0)
-                                                <form action="{{ route('peminjaman.pay-fine', $bayar->id) }}"
-                                                    method="POST" class="inline ml-2">
-                                                    @csrf
-                                                    <button type="submit" class="text-red-600 hover:text-red-900">
-                                                        Pay Fine (Rp.
-                                                        {{ number_format($bayar->total_denda, 0, ',', '.') }})
-                                                    </button>
-                                                </form>
-                                            @endif
-                                        </td>
+        @if ($pinjam->status == 0)
+
+            <form action="{{ route('peminjaman.approve', $pinjam->id) }}" method="POST" class="inline">
+                @csrf
+                @method('PUT')
+                <button type="submit" class="text-green-600 hover:text-green-900 mr-2">Approve</button>
+            </form>
+            <form action="{{ route('peminjaman.cancel', $pinjam->id) }}" method="POST" class="inline">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="text-red-600 hover:text-red-900 mr-2">Reject</button>
+            </form>
+        @elseif ($pinjam->status == 1)
+            <a href="{{ route('peminjaman.return', $pinjam->id) }}"
+                class="text-blue-600 hover:text-blue-900 mr-2">Return Book</a>
+        @endif
+
+    @if ($pinjam->status == 2 || $pinjam->status == 3)
+        <form action="{{ route('peminjaman.destroy', $pinjam->id) }}" method="POST" class="inline">
+            @csrf
+            @method('DELETE')
+            <button type="submit" class="text-red-600 hover:text-red-900 mr-2"
+                onclick="return confirm('Are you sure you want to delete this record?')">Delete</button>
+        </form>
+    @endif
+
+    @php
+    $bayar = \App\Models\Denda::where('peminjaman_id', $pinjam->id)->first();
+@endphp
+
+@if ($bayar && $bayar->is_paid == 0)
+
+<form action="{{ route('peminjaman.pay-fine', $bayar->id) }}" method="POST" class="inline">
+            @csrf
+
+            <button type="submit" class="text-yellow-600 hover:text-yellow-900">
+                Pay Fine (Rp. {{ number_format($bayar->total_denda, 0, ',', '.') }})
+            </button>
+        </form>
+    @endif
+</td>
+
+<!-- ... (rest of the code remains unchanged) -->
+
+
                                     </tr>
                                 @endforeach
                             </tbody>

@@ -22,6 +22,7 @@ class Buku extends Model
         'slug',
     ];
 
+
     public function penerbit()
     {
         return $this->belongsTo(Penerbit::class);
