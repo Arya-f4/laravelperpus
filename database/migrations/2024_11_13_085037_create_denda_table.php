@@ -11,8 +11,8 @@ class CreateDendaTable extends Migration
         Schema::create('denda', function (Blueprint $table) {
             $table->id();
             $table->foreignId('peminjaman_id')->constrained('peminjaman');
-            $table->integer('jumlah_hari');
-            $table->decimal('total_denda', 10, 2);
+            $table->integer('jumlah_hari')->nullable();
+            $table->decimal('total_denda', 10, 2)->nullable();
             $table->boolean('is_paid')->default(false);
             $table->timestamps();
         });

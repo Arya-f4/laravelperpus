@@ -17,6 +17,7 @@ class Dendaseeder extends Seeder
     {
         $peminjamanIds = Peminjaman::pluck('id')->toArray();
         $dendas = [];
+        
 
         foreach ($peminjamanIds as $peminjamanId) {
             $isPaid = rand(0, 1);
@@ -24,7 +25,7 @@ class Dendaseeder extends Seeder
 
             $dendas[] = [
                 'peminjaman_id' => $peminjamanId,
-                'jumlah' => $totalDenda,
+                'jumlah_hari' => $totalDenda,
                 'total_denda' => $totalDenda,
                 'is_paid' => $isPaid,
                 'created_at' => now(),
@@ -32,6 +33,6 @@ class Dendaseeder extends Seeder
             ];
         }
 
-        DB::table('dendas')->insert($dendas);
+        DB::table('denda')->insert($dendas);
     }
 }

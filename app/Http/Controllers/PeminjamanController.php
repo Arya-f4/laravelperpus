@@ -19,7 +19,7 @@ class PeminjamanController extends Controller
     {
 
         $peminjaman = Peminjaman::with(['user', 'denda', 'detailPeminjaman'])
-            ->orderBy('status', 'ASC')
+            ->orderBy('created_at', 'DESC')
             ->paginate(10);
 
 
@@ -30,7 +30,7 @@ class PeminjamanController extends Controller
     {
         $borrowings = Peminjaman::where('peminjam_id', Auth::id())
             ->with('bukus')
-            ->orderBy('status', 'ASC')
+            ->orderBy('created_at', 'DESC')
             ->get();
         return view('peminjaman.user-index', compact('borrowings'));
     }

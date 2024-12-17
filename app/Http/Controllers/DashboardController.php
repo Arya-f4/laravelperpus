@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use App\Models\Denda;
 use App\Models\Penerbit;
+use App\Models\UserActivityLog;
 use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
@@ -40,21 +41,20 @@ class DashboardController extends Controller
         $activeBorrowings = Peminjaman::where('status', 'dipinjam')->count();
         $totalBorrowings = Peminjaman::count();
         $totalFines = Denda::sum('total_denda');
-
+        $aktivitas_user = UserActivityLog::paginate(5);
         $penerbit = Penerbit::all();
         $bukuData = Buku::selectRaw('penerbit_id, count(*) as jumlah')
-                        ->groupBy('penerbit_id')
-                        ->get();
+                ->groupBy('penerbit_id')
+                ->get();
         
-        // Prepare data for the chart
+        // buku per penerbit
         $labels = $bukuData->map(function ($item) {
             return Penerbit::find($item->penerbit_id)->nama;
         });
-
+        
         $data = $bukuData->map(function ($item) {
             return $item->jumlah;
         });
-
 
         $recentBorrowings = Peminjaman::with(['user', 'buku'])
             ->latest()
@@ -67,7 +67,7 @@ class DashboardController extends Controller
             ->get();
         $pendingRequests = Peminjaman::where('status', 'menunggu konfirmasi')->count();
         // return $active_users;
-        return view('dashboard.admin', compact('labels', 'data','totalBooks', 'totalUsers', 'activeBorrowings', 'totalBorrowings', 'totalFines', 'pendingRequests', 'recentBorrowings', 'popularBooks'));
+        return view('dashboard.admin', compact('aktivitas_user', 'labels', 'data','totalBooks', 'totalUsers', 'activeBorrowings', 'totalBorrowings', 'totalFines', 'pendingRequests', 'recentBorrowings', 'popularBooks'));
     }
 
     private function petugasDashboard()

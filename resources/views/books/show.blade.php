@@ -59,13 +59,13 @@
                         @auth
                             @if (Auth::user()->role_id == 3)
                                 @if ($book->stok > 0)
-                                    <form action="{{ route('books.request-borrow', $book->id) }}" method="POST">
+                                    {{-- <form action="{{ route('books.request-borrow', $book->id) }}" method="POST">
                                         @csrf
                                         <button type="submit"
                                             class="bg-blue-500 mb-4 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                                             Borrow this Book
                                         </button>
-                                    </form>
+                                    </form> --}}
                                     <form action="{{ route('books.add-to-cart', $book->id) }}" method="POST">
                                         @csrf
                                         <button type="submit"

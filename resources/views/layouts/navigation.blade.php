@@ -36,6 +36,9 @@
                             <x-nav-link :href="route('peminjaman.index')" :active="request()->routeIs('peminjaman.*')">
                                 {{ __('Manage Borrowings') }}
                             </x-nav-link>
+                            <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
+                                {{ __('Manage Users') }}
+                            </x-nav-link>
                             <x-nav-link :href="route('denda.index')" :active="request()->routeIs('denda.index')">
                                 {{ __('Fines') }}
                             </x-nav-link>

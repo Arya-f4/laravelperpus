@@ -139,7 +139,7 @@
                                             @endif
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm">
-                                            @if (auth()->user()->hasRole(['admin', 'petugas']))
+                                            @if (Auth::user()->role_id === 1 || Auth::user()->role_id == 2)
                                                 @if ($pinjam->status == 1)
                                                     <a href="{{ route('peminjaman.return', $pinjam->id) }}"
                                                         class="text-blue-600 hover:text-blue-900">Return Book</a>

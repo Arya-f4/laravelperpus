@@ -77,65 +77,90 @@
                 </div>
             </div>
 
+            <div class="grid grid-cols-2 gap-5">
+                <div class="col-span-1">
+                    <div class="w-full mx-auto p-4 bg-gray-700 rounded-lg shadow-lg">
+                        <h2 class="text-xl font-semibold mb-4 text-white">Jumlah Buku per Penerbit</h2>
+                        <canvas id="myChart" style="width:100%; max-height:350px;"></canvas>
+                    </div>
+                </div>
+                <div class="w-full mx-auto p-4 bg-gray-700 rounded-lg shadow-lg">
+                    <h2 class="text-2xl font-semibold mb-4">User Activity Logs</h2>
+                    <ul class="space-y-4">
+                        @foreach($aktivitas_user as $log)
+                        <li class="flex justify-between items-center p-4 bg-gray-800 text-white rounded-lg shadow">
+                            <div>
+                                <p class="text-lg font-semibold">{{ $log->user->name }}</p>
+                                <p class="text-sm text-gray-600 dark:text-gray-300">
+                                    {{ ucfirst($log->activity) }} at {{ $log->created_at->format('d M Y, H:i:s') }}
+                                </p>
+                            </div>
+                            <span class="px-2 py-1 text-sm font-medium rounded 
+                                {{ $log->activity === 'login' ? 'bg-green-500 text-white' : 'bg-red-500 text-white' }}">
+                                {{ ucfirst($log->activity) }}
+                            </span>
+                        </li>
+                        @endforeach
+                    </ul>
+                </div>
+            </div>
 
-            <div class="grid grid-cols-2">
+            {{-- <div class="grid grid-cols-2">
                 <div class="">
                     <div class="w-full mx-auto p-4 bg-gray-100 rounded-lg shadow-lg">
                         <h2 class="text-xl font-semibold mb-4 text-gray-700">Chart</h2>
                         <div id="chart"></div>
                     </div>
                 </div>
-            </div>
-
-            {{-- <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 bg-white border-b border-gray-200">
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="bg-blue-100 p-4 rounded">
-                            <h3 class="text-lg font-semibold mb-2">Total Books</h3>
-                            <p class="text-3xl font-bold">{{ $totalBooks }}</p>
-                        </div>
-                        <div class="bg-green-100 p-4 rounded">
-                            <h3 class="text-lg font-semibold mb-2">Total Users</h3>
-                            <p class="text-3xl font-bold">{{ $totalUsers }}</p>
-                        </div>
-                        <div class="bg-yellow-100 p-4 rounded">
-                            <h3 class="text-lg font-semibold mb-2">Active Borrowings</h3>
-                            <p class="text-3xl font-bold">{{ $activeBorrowings }}</p>
-                        </div>
-                        <div class="bg-red-100 p-4 rounded">
-                            <h3 class="text-lg font-semibold mb-2">Pending Requests</h3>
-                            <p class="text-3xl font-bold">{{ $pendingRequests }}</p>
-                        </div>
-                    </div>
-                </div>
             </div> --}}
+
         </div>
     </div>
 
-{{--     
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         var ctx = document.getElementById('myChart').getContext('2d');
         var myChart = new Chart(ctx, {
-            type: 'bar', // bar chart type
+            type: 'doughnut', // Doughnut chart type
             data: {
                 labels: @json($labels), // Publisher names
                 datasets: [{
                     label: 'Number of Books',
                     data: @json($data), // Number of books
-                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                    borderColor: 'rgba(54, 162, 235, 1)',
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)'
+                    ],
                     borderWidth: 1
                 }]
             },
             options: {
-                scales: {
-                    y: {
-                        beginAtZero: true
+                responsive: true,
+                maintainAspectRatio: false, // Allows custom height
+                plugins: {
+                    legend: {
+                        position: 'right', // Move labels to the right side
+                        labels: {
+                            boxWidth: 20, // Adjusts the size of the color boxes
+                            padding: 20 // Adds spacing between legend items
+                        }
                     }
                 }
             }
         });
-    </script> --}}
+    </script>
+    
 
 </x-app-layout>

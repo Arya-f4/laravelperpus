@@ -4,11 +4,11 @@
             <div class="bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 bg-gray-800">
                     <div class="flex justify-between items-center mb-6">
-                        <h2 class="text-lg font-semibold text-white">Categories Management</h2>
+                        <h2 class="text-lg font-semibold text-white">User Management</h2>
                         @if (Auth::user()->role_id == 1)
-                            <a href="{{ route('categories.create') }}"
+                            <a href="{{ route('users.create') }}"
                                 class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                                Add New Category
+                                Add New User
                             </a>
                         @endif
                     </div>
@@ -34,7 +34,17 @@
 
                                                     <th scope="col"
                                                         class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                                                        Slug
+                                                        Email
+                                                    </th>
+
+                                                    <th scope="col"
+                                                        class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                                                        Role
+                                                    </th>
+
+                                                    <th scope="col"
+                                                        class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                                                        Status
                                                     </th>
 
                                                     <th scope="col"
@@ -45,36 +55,51 @@
                                             </thead>
                                             <tbody
                                                 class="bg-white divide-y divide-gray-200 dark:divide-gray-700 dark:bg-gray-900">
-                                                @foreach ($categories as $category)
+                                                @foreach ($users as $user)
                                                     <tr>
                                                         <td
                                                             class="px-4 py-4 text-sm font-medium text-gray-700 dark:text-gray-200 whitespace-nowrap">
                                                             <div class="inline-flex items-center gap-x-3">
-                                                                <span> {{ $category->id }}</span>
+                                                                <span> {{ $user->id }}</span>
                                                             </div>
                                                         </td>
                                                         <td
                                                             class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
-                                                            {{ $category->nama }}</td>
+                                                            {{ $user->name }}
+                                                        </td>
                                                         <td
-                                                            class="px-4 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
-                                                            <div
-                                                                class="inline-flex items-center px-3 py-1 rounded-full gap-x-2 text-emerald-500 bg-emerald-100/60 dark:bg-gray-800">
-                                                                <h2 class="text-sm font-normal"> {{ $category->slug }}
-                                                                </h2>
-                                                            </div>
+                                                            class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
+                                                            {{ $user->email }}
+                                                        </td>
+                                                        <td
+                                                            class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
+                                                            @if ($user->role_id == 1)
+                                                                Admin
+                                                            @elseif ($user->role_id == 2)
+                                                                Petugas
+                                                            @else
+                                                                Peminjam
+                                                            @endif
+                                                        </td>
+                                                        <td
+                                                            class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
+                                                                @if ($user->status == 'Online')
+                                                                    Online
+                                                                @endif
+                                                                @if ($user->status == 'Offline')
+                                                                    Offline
+                                                                @endif
                                                         </td>
                                                         <td class="px-4 py-4 text-sm whitespace-nowrap">
                                                             @if (Auth::user()->role_id == 1 || Auth::user()->role_id == 2)
-                                                                <a href="{{ route('categories.edit', $category) }}"
+                                                                <a href="{{ route('users.edit', $user) }}"
                                                                     class="text-indigo-600 hover:text-indigo-900 mr-3">
                                                                     Edit
                                                                 </a>
                                                             @endif
 
                                                             @if (Auth::user()->role_id == 1 || Auth::user()->role_id == 2)
-                                                                <form
-                                                                    action="{{ route('categories.destroy', $category) }}"
+                                                                <form action="{{ route('users.destroy', $user) }}"
                                                                     method="POST" class="inline">
                                                                     @csrf
                                                                     @method('DELETE')
@@ -97,9 +122,10 @@
                         </div>
 
                     </section>
-                    
+
+
                     <div class="mt-4">
-                        {{ $categories->links() }}
+                        {{ $users->links() }}
                     </div>
                 </div>
             </div>
