@@ -16,15 +16,15 @@ use App\Models\DetailPeminjaman;
 class PeminjamanController extends Controller
 {
     public function index()
-    {
+{
+    $peminjaman = Peminjaman::with(['user', 'denda', 'detailPeminjaman'])
+        ->orderBy('created_at', 'DESC')
+        ->get();
 
-        $peminjaman = Peminjaman::with(['user', 'denda', 'detailPeminjaman'])
-            ->orderBy('created_at', 'DESC')
-            ->paginate(10);
+    return view('peminjaman.index', compact('peminjaman'));
+}
 
 
-        return view('peminjaman.index', compact('peminjaman'));
-    }
 
     public function userIndex()
     {
@@ -49,7 +49,8 @@ class PeminjamanController extends Controller
         $cart[$bookId] = $bookId;
         session()->put('cart', $cart);
 
-        return redirect()->back()->with('success', 'Book added to cart successfully.');
+        return redirect()->route('peminjaman.cart')->with('success', 'Borrowing request rejected successfully.');
+
     }
 
     public function viewCart()
@@ -148,8 +149,8 @@ class PeminjamanController extends Controller
             return redirect()->back()->with('error', 'This request cannot be cancelled.');
         }
 
-        $peminjaman->update(['status' => 2]); // Set status to rejected instead of deleting
-        return redirect()->route('peminjaman.index')->with('success', 'Borrowing request rejected successfully.');
+        $peminjaman->update(['status' => 4]); // Set status to rejected instead of deleting
+        return redirect()->route('peminjaman.user-index')->with('success', 'Borrowing request rejected successfully.');
     }
     public function show($id)
     {

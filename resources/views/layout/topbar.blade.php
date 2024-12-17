@@ -21,24 +21,7 @@
                             <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">
                                 {{ __('Admin Dashboard') }}
                             </x-nav-link>
-                            <x-nav-link :href="route('books.index')" :active="request()->routeIs('books.*')">
-                                {{ __('Manage Books') }}
-                            </x-nav-link>
-                            <x-nav-link :href="route('categories.index')" :active="request()->routeIs('categories.*')">
-                                {{ __('Manage Categories') }}
-                            </x-nav-link>
-                            <x-nav-link :href="route('publishers.index')" :active="request()->routeIs('publishers.*')">
-                                {{ __('Manage Publishers') }}
-                            </x-nav-link>
-                            <x-nav-link :href="route('racks.index')" :active="request()->routeIs('racks.*')">
-                                {{ __('Manage Racks') }}
-                            </x-nav-link>
-                            <x-nav-link :href="route('peminjaman.index')" :active="request()->routeIs('peminjaman.*')">
-                                {{ __('Manage Borrowings') }}
-                            </x-nav-link>
-                            <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
-                                {{ __('Manage Users') }}
-                            </x-nav-link>
+
                             <x-nav-link :href="route('denda.index')" :active="request()->routeIs('denda.index')">
                                 {{ __('Fines') }}
                             </x-nav-link>

@@ -7,8 +7,8 @@
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
                     <a href="{{ route('home') }}">
-                    <img src="{{ asset('logo.png') }}" alt="Logo" class="block h-9 w-auto fill-current" />
-                    </a>
+                        <img src="{{ asset('logo.png') }}" alt="Logo" class="block h-10 w-auto" />
+                       </a>
                 </div>
 
                 <!-- Navigation Links -->
@@ -21,24 +21,7 @@
                             <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">
                                 {{ __('Admin Dashboard') }}
                             </x-nav-link>
-                            <x-nav-link :href="route('books.index')" :active="request()->routeIs('books.*')">
-                                {{ __('Manage Books') }}
-                            </x-nav-link>
-                            <x-nav-link :href="route('categories.index')" :active="request()->routeIs('categories.*')">
-                                {{ __('Manage Categories') }}
-                            </x-nav-link>
-                            <x-nav-link :href="route('publishers.index')" :active="request()->routeIs('publishers.*')">
-                                {{ __('Manage Publishers') }}
-                            </x-nav-link>
-                            <x-nav-link :href="route('racks.index')" :active="request()->routeIs('racks.*')">
-                                {{ __('Manage Racks') }}
-                            </x-nav-link>
-                            <x-nav-link :href="route('peminjaman.index')" :active="request()->routeIs('peminjaman.*')">
-                                {{ __('Manage Borrowings') }}
-                            </x-nav-link>
-                            <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
-                                {{ __('Manage Users') }}
-                            </x-nav-link>
+
                             <x-nav-link :href="route('denda.index')" :active="request()->routeIs('denda.index')">
                                 {{ __('Fines') }}
                             </x-nav-link>
@@ -69,6 +52,7 @@
                                 {{-- <div class="text-xs text-gray-500 font-semibold mt-1">
                                     {{ ucfirst(Auth::user()->getRoleNames()->first()) }}
                                 </div> --}}
+
 
                                 <div class="ml-1">
                                     <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
@@ -151,9 +135,6 @@
                     </x-responsive-nav-link>
                     <x-responsive-nav-link :href="route('peminjaman.index')" :active="request()->routeIs('peminjaman.user-index')">
                         {{ __('My Borrowings') }}
-                    </x-responsive-nav-link>
-                    <x-responsive-nav-link :href="route('peminjaman.cart')" :active="request()->routeIs('peminjaman.cart')">
-                        {{ __('Cart') }}
                     </x-responsive-nav-link>
 
                 @endif

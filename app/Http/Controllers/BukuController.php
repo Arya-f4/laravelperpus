@@ -39,10 +39,27 @@ class BukuController extends Controller
         $categories = Kategori::all();
         $publishers = Penerbit::all();
 
+        // Get most borrowed books
+        $mostBorrowedBooks = Buku::select('buku.*')
+            ->join('detail_peminjaman', 'buku.id', '=', 'detail_peminjaman.buku_id')
+            ->groupBy('buku.id')
+            ->orderByRaw('COUNT(detail_peminjaman.id) DESC')
+            ->limit(4)
+            ->get();
+
+        // Get latest books
+        $latestBooks = Buku::latest()->limit(4)->get();
+
         // Use 'home' view for the root route, 'books.index' for other cases
         $view = $request->routeIs('home') ? 'home' : 'books.index';
 
-        return view($view, compact('books', 'categories', 'publishers'));
+        return view($view, compact('books', 'categories', 'publishers', 'mostBorrowedBooks', 'latestBooks'));
+    }
+
+    public function show($slug)
+    {
+        $book = Buku::with(['kategori', 'penerbit', 'rak'])->where('slug', $slug)->firstOrFail();
+        return view('books.show', compact('book'));
     }
     public function data()
     {
@@ -161,9 +178,5 @@ class BukuController extends Controller
         return redirect()->route('books.index')->with('success', 'Book deleted successfully.');
     }
 
-    public function show($slug)
-    {
-        $book = Buku::where('slug', $slug)->firstOrFail();
-        return view('books.show', compact('book'));
-    }
+
 }

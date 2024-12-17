@@ -51,6 +51,10 @@
                                                 <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
                                                     Returned
                                                 </span>
+                                            @elseif ($borrowing->status == 4)
+                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-red-800">
+                                                    Canceled by User
+                                                </span>
                                             @endif
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
