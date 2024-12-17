@@ -7,6 +7,9 @@ use App\Models\Peminjaman;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Models\Denda;
+use App\Models\Penerbit;
+use Illuminate\Support\Facades\DB;
+
 class DashboardController extends Controller
 {
     public function userDashboard()
@@ -21,8 +24,8 @@ class DashboardController extends Controller
             ->with('buku')
             ->get();
         $pendingDendas = Denda::whereHas('peminjaman', function ($query) use ($user) {
-                $query->where('peminjam_id', $user->id);
-            })
+            $query->where('peminjam_id', $user->id);
+        })
             ->where('is_paid', false)
             ->get();
 
@@ -38,6 +41,21 @@ class DashboardController extends Controller
         $totalBorrowings = Peminjaman::count();
         $totalFines = Denda::sum('total_denda');
 
+        $penerbit = Penerbit::all();
+        $bukuData = Buku::selectRaw('penerbit_id, count(*) as jumlah')
+                        ->groupBy('penerbit_id')
+                        ->get();
+        
+        // Prepare data for the chart
+        $labels = $bukuData->map(function ($item) {
+            return Penerbit::find($item->penerbit_id)->nama;
+        });
+
+        $data = $bukuData->map(function ($item) {
+            return $item->jumlah;
+        });
+
+
         $recentBorrowings = Peminjaman::with(['user', 'buku'])
             ->latest()
             ->take(5)
@@ -48,8 +66,8 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
         $pendingRequests = Peminjaman::where('status', 'menunggu konfirmasi')->count();
-
-        return view('dashboard.admin', compact('totalBooks', 'totalUsers', 'activeBorrowings', 'totalBorrowings','totalFines' , 'pendingRequests','recentBorrowings','popularBooks'));
+        // return $active_users;
+        return view('dashboard.admin', compact('labels', 'data','totalBooks', 'totalUsers', 'activeBorrowings', 'totalBorrowings', 'totalFines', 'pendingRequests', 'recentBorrowings', 'popularBooks'));
     }
 
     private function petugasDashboard()
@@ -78,4 +96,3 @@ class DashboardController extends Controller
         }
     }
 }
-

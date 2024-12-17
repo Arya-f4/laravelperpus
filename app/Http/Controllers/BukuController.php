@@ -15,7 +15,7 @@ class BukuController extends Controller
     public function index()
     {
         $books = Buku::with(['kategori', 'penerbit', 'rak'])->paginate(10);
-        dd($books);
+
         return view('books.index', compact('books'));
     }
     public function data()

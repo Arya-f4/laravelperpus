@@ -16,7 +16,7 @@ class Peminjaman extends Model
 
     public function buku()
     {
-        return $this->belongsTo(Buku::class, 'buku_id');  // assuming 'buku_id' is the foreign key
+        return $this->belongsTo(Buku::class, 'buku_id', 'id');
     }
 
     public function denda()

@@ -7,7 +7,7 @@
     </x-slot>
 
     <div class="py-12">
-        
+
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
             <div class="sm:flex sm:space-x-4">
@@ -77,6 +77,16 @@
                 </div>
             </div>
 
+
+            <div class="grid grid-cols-2">
+                <div class="">
+                    <div class="w-full mx-auto p-4 bg-gray-100 rounded-lg shadow-lg">
+                        <h2 class="text-xl font-semibold mb-4 text-gray-700">Chart</h2>
+                        <div id="chart"></div>
+                    </div>
+                </div>
+            </div>
+
             {{-- <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 bg-white border-b border-gray-200">
                     <div class="grid grid-cols-2 gap-4">
@@ -101,4 +111,31 @@
             </div> --}}
         </div>
     </div>
+
+{{--     
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        var ctx = document.getElementById('myChart').getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'bar', // bar chart type
+            data: {
+                labels: @json($labels), // Publisher names
+                datasets: [{
+                    label: 'Number of Books',
+                    data: @json($data), // Number of books
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script> --}}
+
 </x-app-layout>

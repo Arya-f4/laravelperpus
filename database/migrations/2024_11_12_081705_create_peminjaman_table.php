@@ -15,6 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string('kode_pinjam');
             $table->foreignId('peminjam_id');
+            $table->unsignedBigInteger('buku_id')->nullable();
+            $table->foreign('buku_id')->references('id')->on('buku');
+            // $table->foreignId('buku_id')->constrained('buku')->onDelete('cascade');
             $table->foreignId('petugas_pinjam')->nullable();
             $table->foreignId('petugas_kembali')->nullable();
             $table->integer('status');
