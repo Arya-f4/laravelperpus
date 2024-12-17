@@ -17,9 +17,32 @@ class PeminjamanController extends Controller
 {
     public function index()
 {
+    $activeBorrowings = Peminjaman::where('status', 1)->get();
+
     $peminjaman = Peminjaman::with(['user', 'denda', 'detailPeminjaman'])
-        ->orderBy('created_at', 'DESC')
-        ->get();
+    ->orderBy('created_at', 'DESC')
+    ->get();
+    $now = Carbon::now();
+
+    foreach ($activeBorrowings as $borrowing) {
+        $dueDate = Carbon::parse($borrowing->tanggal_pinjam)->addDays(14);
+        if ($now->gt($dueDate)) {
+            $daysLate = abs($now->diffInDays($dueDate));
+            $totalFine = $daysLate * 1000; // Assuming 1000 per day
+
+            Denda::updateOrCreate(
+                ['peminjaman_id' => $borrowing->id],
+                [
+                    'jumlah_hari' => $daysLate,
+                    'total_denda' => $totalFine,
+                    'is_paid' => 0
+                ]
+            );
+
+
+
+        }
+    }
 
     return view('peminjaman.index', compact('peminjaman'));
 }
@@ -356,11 +379,13 @@ public function returnBook($id)
         // Update the fine to 'paid'
         $denda->update(['is_paid' => 1]);
 
+
         // Update the associated peminjaman status if necessary
         $peminjaman = Peminjaman::findOrFail($denda->peminjaman_id);
         $peminjaman->update([
             'status' => 3, // or whatever status you want to set for paid fines
-        ]);
+            'tanggal_pengembalian' => now(),
+            ]);
 
         return response()->json(['message' => 'Fine paid and status updated successfully.'], 200);
     }
