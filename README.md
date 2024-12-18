@@ -8,6 +8,7 @@
 
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
 </p>
+
 # Laravel Library Management System
 
 ## Description
