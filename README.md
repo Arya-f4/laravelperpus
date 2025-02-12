@@ -23,7 +23,6 @@ This Laravel-based Library Management System is a comprehensive solution for man
 - User management
 - Borrowing process management
 - Fine calculation and payment system
-- Book exploration using ISBN API
 - Responsive design with Tailwind CSS
 - Dynamic sidebar for easy navigation
 
@@ -32,7 +31,6 @@ This Laravel-based Library Management System is a comprehensive solution for man
 - Manage books, categories, publishers, and racks
 - Approve or reject borrowing requests
 - Manage user accounts
-- Explore and add new books using ISBN API
 
 ### User Features
 - Browse and search for books
