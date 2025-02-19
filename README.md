@@ -37,7 +37,7 @@ This Laravel-based Library Management System is a comprehensive solution for man
 - View book details
 - Request to borrow books
 - View borrowing history
-- Pay fines (if applicable)
+- Pay fines
 
 ## Technologies Used
 
