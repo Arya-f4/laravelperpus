@@ -23,14 +23,14 @@
                             @csrf
                             @method('PUT')
                             <div class="form-group">
-                                <label for="name" class="block text-lg font-medium">Name:</label>
-                                <input type="text" id="name" name="name" value="{{ $user->name }}" class="w-full p-2 border rounded-lg"
+                                <label for="name" class="block text-lg text-black font-medium">Name:</label>
+                                <input type="text" id="name" name="name" value="{{ $user->name }}" class="w-full p-2 border text-gray-700 rounded-lg"
                                     required>
                             </div>
     
                             <div class="form-group">
-                                <label for="email" class="block text-lg font-medium">Email:</label>
-                                <input type="email" id="email" name="email" value="{{ $user->email }}" class="w-full p-2 border rounded-lg"
+                                <label for="email" class="block text-lg text-black font-medium">Email:</label>
+                                <input type="email" id="email" name="email" value="{{ $user->email }}" class="w-full p-2 border text-gray-700 rounded-lg"
                                     required>
                             </div>
     
@@ -41,8 +41,8 @@
                             </div> --}}
     
                             <div class="form-group">
-                                <label for="role_id" class="block text-lg font-medium">Role:</label>
-                                <select id="role_id" name="role_id" value="{{ $user->role_id }}" class="w-full p-2 border rounded-lg" required>
+                                <label for="role_id" class="block text-lg text-black font-medium">Role:</label>
+                                <select id="role_id" name="role_id" value="{{ $user->role_id }}" class="w-full p-2 border text-gray-700 rounded-lg" required>
                                     <option value="">Select a role</option>
                                     <!-- Populate roles dynamically if needed -->
                                     <option value="1">Admin</option>

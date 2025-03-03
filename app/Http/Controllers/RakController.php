@@ -23,7 +23,7 @@ class RakController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'nama' => 'required|string|max:255',
+            'rak' => 'required|string|max:255',
             'baris' => 'required|integer|min:1',
             'slug' => 'required|string|unique:rak,slug',
         ]);

@@ -31,7 +31,6 @@ class UserController extends Controller
 
         User::insert($data);
         return redirect('/users/all');
-
     }
 
     public function edit(Request $request, $id)
@@ -41,24 +40,34 @@ class UserController extends Controller
     }
     public function update(Request $request, $id)
     {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:users,email,' . $id,
+            'password' => 'nullable|min:8',
+            'role_id' => 'required|exists:roles,id',
+            'status' => 'required|boolean',
+        ]);
+
         $user = User::findOrFail($id);
 
-        $user->name = $request->name;
-        $user->email = $request->email;
-        $user->password = $request->password;
-        $user->role_id = $request->role_id;
-        $user->status = $request->status;
+        $user->name = $validated['name'];
+        $user->email = $validated['email'];
+        if ($request->filled('password')) {
+            $user->password = bcrypt($validated['password']);
+        }
+        $user->role_id = $validated['role_id'];
+        $user->status = $validated['status'];
         $user->save();
 
-        return redirect()->back();
+        return redirect()->back()->with('success', 'User berhasil diperbarui.');
     }
+
+
     public function delete($id)
     {
         $data = User::findOrFail($id);
         $data->delete();
 
         return redirect()->back();
-
     }
-
 }

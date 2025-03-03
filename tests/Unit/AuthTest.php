@@ -1,7 +1,5 @@
 <?php
-
 namespace Tests\Feature;
-
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use App\Models\User;
@@ -12,9 +10,7 @@ use Spatie\Permission\Models\Role;
 class AuthTest extends TestCase
 {
     use RefreshDatabase;
-
     protected $adminUser;
-
     public function setUp(): void
     {
         parent::setUp();
@@ -26,6 +22,7 @@ class AuthTest extends TestCase
         $this->adminUser = User::where('email', 'admin@gmail.com')->first();
     }
 
+
     /**
      * Test registration screen can be rendered
      */
@@ -36,6 +33,7 @@ class AuthTest extends TestCase
         $response->assertStatus(200)
                  ->assertViewIs('auth.register');
     }
+
 
     /**
      * Test new users can register
@@ -64,6 +62,7 @@ class AuthTest extends TestCase
         $this->assertTrue(Hash::check('password123', $user->password));
     }
 
+
     /**
      * Test registration fails with duplicate email
      */
@@ -80,6 +79,7 @@ class AuthTest extends TestCase
         $this->assertGuest();
     }
 
+
     /**
      * Test login screen can be rendered
      */
@@ -90,6 +90,7 @@ class AuthTest extends TestCase
         $response->assertStatus(200)
                  ->assertViewIs('auth.login');
     }
+
 
     /**
      * Test users can authenticate using the login screen
@@ -113,6 +114,7 @@ class AuthTest extends TestCase
             'activity' => 'login',
         ]);
     }
+
 
     /**
      * Test users cannot authenticate with invalid password
