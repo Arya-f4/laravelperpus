@@ -55,7 +55,7 @@ class RakTest extends TestCase
         ]);
 
         $response->assertRedirect(route('racks.index'));
-        $this->assertDatabaseHas('raks', ['rak' => 'Rak A']);
+        $this->assertDatabaseHas('rak', ['rak' => 'Rak A']);
     }
 
 

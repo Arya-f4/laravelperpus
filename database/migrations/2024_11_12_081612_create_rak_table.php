@@ -14,11 +14,11 @@ return new class extends Migration
         Schema::create('rak', function (Blueprint $table) {
             $table->id();
             $table->string('rak');
-            $table->string('baris');
+            $table->integer('baris');
             $table->string('slug');
-            $table->foreignId('kategori_id');
+            $table->foreignId('kategori_id')->nullable()->constrained('kategori')->onDelete('set null');
             $table->timestamps();
-        });
+        });        
     }
 
     /**

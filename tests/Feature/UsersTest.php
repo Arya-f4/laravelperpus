@@ -73,10 +73,12 @@ class UsersTest extends TestCase
         // Data update
         $updateData = [
             'name' => 'Nama Baru',
-        ];
+            'email' => 'newemail@example.com',
+            'role_id' => $user->role_id, // Tambahkan ini
+        ];        
 
         // Kirim request PUT ke route update
-        $response = $this->put(route('users.update', $user->id), $updateData);
+        $response = $this->put(route('users.update', ['id' => $user->id]), $updateData);
 
         // Pastikan user yang diupdate memiliki nama baru
         $this->assertDatabaseHas('users', [

@@ -34,11 +34,11 @@
                                     required>
                             </div>
     
-                            {{-- <div class="form-group">
-                                <label for="password" class="block text-lg font-medium">Password:</label>
-                                <input type="password" id="password" name="password" value="{{ $user->password }}" class="w-full p-2 border rounded-lg"
+                            <div class="form-group">
+                                <label for="password" class="block text-lg text-black font-medium">Password:</label>
+                                <input type="password" id="password" name="password" value="{{ $user->password }}" class="w-full p-2 border text-gray-700 rounded-lg"
                                     required>
-                            </div> --}}
+                            </div>
     
                             <div class="form-group">
                                 <label for="role_id" class="block text-lg text-black font-medium">Role:</label>
@@ -60,7 +60,7 @@
                             </div> --}}
     
                             <button type="submit"
-                                class="w-full bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600">Create User</button>
+                                class="w-full bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600">Update User</button>
                         </form>
     
                     </div>

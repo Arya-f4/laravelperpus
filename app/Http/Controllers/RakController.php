@@ -17,7 +17,8 @@ class RakController extends Controller
 
     public function create()
     {
-        return view('racks.create');
+        $categories = Kategori::all();
+        return view('racks.create', compact('categories'));
     }
 
     public function store(Request $request)
@@ -26,7 +27,8 @@ class RakController extends Controller
             'rak' => 'required|string|max:255',
             'baris' => 'required|integer|min:1',
             'slug' => 'required|string|unique:rak,slug',
-        ]);
+            'kategori_id' => 'required|exists:kategori,id',
+        ]);        
 
         Rak::create($validated);
 

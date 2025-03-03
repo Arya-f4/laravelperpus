@@ -25,8 +25,7 @@ class UserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => $request->password,
-            'role_id' => $request->role_id,
-            'status' => $request->status,
+            'role_id' => $request->role_id
         ];
 
         User::insert($data);
@@ -38,30 +37,28 @@ class UserController extends Controller
         $user = User::findOrFail($id);
         return view('users.edit', compact('user'));
     }
+
     public function update(Request $request, $id)
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:users,email,' . $id,
             'password' => 'nullable|min:8',
-            'role_id' => 'required|exists:roles,id',
-            'status' => 'required|boolean',
+            'role_id' => 'required|exists:roles,id'
         ]);
 
         $user = User::findOrFail($id);
 
         $user->name = $validated['name'];
         $user->email = $validated['email'];
-        if ($request->filled('password')) {
-            $user->password = bcrypt($validated['password']);
+        if ($request->filled('newsecurepassword')) {
+            $user->password = bcrypt($validated['newsecurepassword']);
         }
         $user->role_id = $validated['role_id'];
-        $user->status = $validated['status'];
         $user->save();
 
         return redirect()->back()->with('success', 'User berhasil diperbarui.');
     }
-
 
     public function delete($id)
     {

@@ -20,30 +20,30 @@
                         @endif
     
                         <!-- Form to create a new user -->
-                        <form action="{{ route('users.store') }}" method="POST" class="space-y-4">
+                        <form action="{{ route('users.index') }}" method="POST" class="space-y-4">
                             @csrf
     
                             <div class="form-group">
-                                <label for="name" class="block text-lg font-medium">Name:</label>
-                                <input type="text" id="name" name="name" class="w-full p-2 border rounded-lg"
+                                <label for="name" class="block text-black text-lg font-medium">Name:</label>
+                                <input type="text" id="name" name="name" class="w-full p-2 text-gray-700 border rounded-lg"
                                     required>
                             </div>
     
                             <div class="form-group">
-                                <label for="email" class="block text-lg font-medium">Email:</label>
-                                <input type="email" id="email" name="email" class="w-full p-2 border rounded-lg"
+                                <label for="email" class="block text-black text-lg font-medium">Email:</label>
+                                <input type="email" id="email" name="email" class="w-full p-2 text-gray-700 border rounded-lg"
                                     required>
                             </div>
     
-                            {{-- <div class="form-group">
-                                <label for="password" class="block text-lg font-medium">Password:</label>
-                                <input type="password" id="password" name="password" class="w-full p-2 border rounded-lg"
+                            <div class="form-group">
+                                <label for="password" class="block text-black text-lg font-medium">Password:</label>
+                                <input type="password" id="password" name="password" class="w-full p-2 text-gray-700 border rounded-lg"
                                     required>
-                            </div> --}}
+                            </div>
     
                             <div class="form-group">
-                                <label for="role_id" class="block text-lg font-medium">Role:</label>
-                                <select id="role_id" name="role_id" class="w-full p-2 border rounded-lg" required>
+                                <label for="role_id" class="block text-black text-lg font-medium">Role:</label>
+                                <select id="role_id" name="role_id" class="w-full p-2 text-gray-700 border rounded-lg" required>
                                     <option value="">Select a role</option>
                                     <!-- Populate roles dynamically if needed -->
                                     <option value="1">Admin</option>
@@ -53,8 +53,8 @@
                             </div>
     
                             {{-- <div class="form-group">
-                                <label for="status" class="block text-lg font-medium">Status:</label>
-                                <select id="status" name="status" class="w-full p-2 border rounded-lg" required>
+                                <label for="status" class="block text-black text-lg font-medium">Status:</label>
+                                <select id="status" name="status" class="w-full p-2 text-gray-700 border rounded-lg" required>
                                     <option value="Offline">Offline</option>
                                     <option value="Online">Online</option>
                                 </select>
