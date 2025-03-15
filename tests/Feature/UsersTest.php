@@ -9,14 +9,6 @@ use Tests\TestCase;
 
 class UsersTest extends TestCase
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        // Jalankan migrate fresh dan seed sebelum setiap test
-        $this->artisan('migrate:fresh --seed');
-    }
-
     public function test_dapat_menampilkan_halaman_daftar_pengguna()
     {
         // Pastikan role admin tidak dibuat dua kali
